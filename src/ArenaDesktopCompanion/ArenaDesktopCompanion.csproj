@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <RootNamespace>ArenaDesktopCompanion</RootNamespace>
+    <AssemblyName>AXON.RC30</AssemblyName>
+    <UseWPF>true</UseWPF>
+    <!-- Kein UseWindowsForms: WinForms würde per ImplicitUsings global using System.Windows.Forms
+         bringen und damit die Mehrdeutigkeits-Falle (CS0104) erneut aufbauen.
+         Ordnerwahl macht .NET 8 mit Microsoft.Win32.OpenFolderDialog. -->
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+    <AssemblyTitle>ISAS - AXON-RC30</AssemblyTitle>
+    <Product>ISAS - AXON-RC30</Product>
+    <Description>AXON: arena.ai als Windows-App mit Brücke in den lokalen Projektordner.</Description>
+    <EnableDefaultPageItems>true</EnableDefaultPageItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4129.50" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ArenaDesktopCompanion.Core\ArenaDesktopCompanion.Core.csproj" />
+    <ProjectReference Include="..\AXON.Connector\AXON.Connector.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,18 @@
+<Application x:Class="ArenaDesktopCompanion.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <!-- Reihenfolge ist bedeutsam: Palette legt Farben und Schriften an,
+                 Bildlaufleisten und Bedienelemente greifen darauf zu. -->
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Theme/Palette.xaml"/>
+                <ResourceDictionary Source="Theme/ScrollBars.xaml"/>
+                <ResourceDictionary Source="Theme/ScrollBarVertical.xaml"/>
+                <ResourceDictionary Source="Theme/ScrollBarHorizontal.xaml"/>
+                <ResourceDictionary Source="Theme/Controls.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

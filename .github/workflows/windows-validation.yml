@@ -1,0 +1,27 @@
+name: Windows validation (manual)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Build and protocol tests, no desktop input on CI
+        shell: pwsh
+        run: ./scripts/Build.ps1 -SkipUiSmoke
+      - name: Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-validation
+          path: .artifacts/checks/
+          retention-days: 7

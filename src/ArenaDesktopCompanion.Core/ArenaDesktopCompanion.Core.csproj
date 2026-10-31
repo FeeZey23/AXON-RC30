@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>ArenaDesktopCompanion.Core</RootNamespace>
+    <AssemblyName>ArenaDesktopCompanion.Core</AssemblyName>
+    <!-- Bewusst keine Windows-APIs: dieser Teil läuft und wird getestet, egal auf welchem OS. -->
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+
+
+</Project>

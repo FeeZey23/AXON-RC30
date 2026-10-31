@@ -1,0 +1,27 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package Name="ISAS - AXON-RC30" Manufacturer="ISAS" Version="$(var.ProductVersion)" UpgradeCode="8B849114-5D61-4D47-8133-C1400D6D413A" Scope="perUser" Language="1031">
+    <MajorUpgrade DowngradeErrorMessage="Eine neuere AXON-RC30-Version ist bereits installiert." />
+    <MediaTemplate EmbedCab="yes" />
+    <Property Id="INSTALLFOLDER">
+      <RegistrySearch Id="RememberInstallDirectory" Root="HKCU" Key="Software\ISAS\AXON-RC30" Name="InstallPath" Type="raw" />
+    </Property>
+    <Icon Id="AxonIcon" SourceFile="$(var.IconPath)" />
+    <Property Id="ARPPRODUCTICON" Value="AxonIcon" />
+    <StandardDirectory Id="LocalAppDataFolder">
+      <Directory Id="LocalPrograms" Name="Programs"><Directory Id="IsasPrograms" Name="ISAS"><Directory Id="INSTALLFOLDER" Name="AXON-RC30" /></Directory></Directory>
+    </StandardDirectory>
+    <StandardDirectory Id="ProgramMenuFolder"><Directory Id="AxonMenuFolder" Name="ISAS" /></StandardDirectory>
+    <DirectoryRef Id="AxonMenuFolder">
+      <Component Id="StartMenuComponent" Guid="D9F31660-87F6-4C58-A2AA-E44550B5C697">
+        <Shortcut Id="StartMenuShortcut" Name="ISAS - AXON-RC30" Target="[INSTALLFOLDER]AXON.RC30.exe" WorkingDirectory="INSTALLFOLDER" Icon="AxonIcon" />
+        <RemoveFolder Id="RemoveAxonMenu" On="uninstall" />
+        <RemoveFolder Id="RemoveInstallRoot" Directory="INSTALLFOLDER" On="uninstall" />
+        <RemoveFolder Id="RemoveIsasPrograms" Directory="IsasPrograms" On="uninstall" />
+        <RemoveFolder Id="RemoveLocalPrograms" Directory="LocalPrograms" On="uninstall" />
+        <RegistryValue Root="HKCU" Key="Software\ISAS\AXON-RC30" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+        <RegistryValue Root="HKCU" Key="Software\ISAS\AXON-RC30" Name="InstallPath" Type="string" Value="[INSTALLFOLDER]" />
+      </Component>
+    </DirectoryRef>
+    <Feature Id="Application" Title="ISAS - AXON-RC30" Level="1"><ComponentGroupRef Id="RuntimeFiles" /><ComponentRef Id="StartMenuComponent" /></Feature>
+  </Package>
+</Wix>

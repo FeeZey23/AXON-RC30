@@ -1,0 +1,50 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--
+        ============================================================================
+        Bildlaufleisten – Bausteine.
+
+        Warum drei Dateien? ScrollBar sucht in ihrem Template ein Element mit dem
+        Namen „PART_Track“, und in einer XAML-Datei darf ein Name nur einmal
+        vorkommen. Senkrecht und waagerecht brauchen aber beide genau diesen Namen.
+        Deshalb: Bausteine hier, je eine Vorlage pro Datei.
+        ============================================================================
+    -->
+
+    <!-- Unsichtbare Fläche für die Seitenklicks: der Klick soll scrollen, nicht auffallen. -->
+    <Style x:Key="ScrollBar.PageButton" TargetType="RepeatButton">
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="IsTabStop" Value="False"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RepeatButton">
+                    <Border Background="Transparent"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Der Griff: schlank, dunkel, beim Zeigen und Ziehen farbig. -->
+    <Style x:Key="ScrollBar.Thumb" TargetType="Thumb">
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="IsTabStop" Value="False"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Thumb">
+                    <Border x:Name="ThumbShell" Background="{StaticResource Brush.BorderStrong}"
+                            CornerRadius="4" Margin="2"/>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ThumbShell" Property="Background" Value="{StaticResource Brush.Accent}"/>
+                        </Trigger>
+                        <Trigger Property="IsDragging" Value="True">
+                            <Setter TargetName="ThumbShell" Property="Background" Value="{StaticResource Brush.Info}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

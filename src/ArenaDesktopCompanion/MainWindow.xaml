@@ -1,0 +1,42 @@
+<Window x:Class="ArenaDesktopCompanion.MainWindow"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ Title="ISAS - AXON RC30 · Fix4" Width="1440" Height="900" MinWidth="1000" MinHeight="650" Background="{StaticResource Brush.Bg}" Foreground="{StaticResource Brush.Text}"
+ Loaded="Window_Loaded" Closing="Window_Closing">
+ <Grid>
+  <Grid.RowDefinitions><RowDefinition Height="48"/><RowDefinition Height="48"/><RowDefinition Height="*"/><RowDefinition Height="28"/></Grid.RowDefinitions>
+  <Border Background="{StaticResource Brush.Surface}" BorderBrush="{StaticResource Brush.Border}" BorderThickness="0,0,0,1">
+   <DockPanel Margin="16,0">
+    <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center"><TextBlock Text="AXON" FontSize="20" FontWeight="Bold"/><TextBlock Text="RC30  /  PRIVATE SESSIONS" Foreground="{StaticResource Brush.TextDim}" Margin="12,0,30,0" VerticalAlignment="Center"/></StackPanel>
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+     <Button x:Name="ProjectFilesButton" Content="Projektdateien" Click="Files_Click" Margin="3" Padding="14,6"/><Button Content="Protokolle" Click="Logs_Click" Margin="3" Padding="14,6"/><Button Content="Einstellungen" Click="Settings_Click" Margin="3" Padding="14,6"/><Button Content="Info" Click="Info_Click" Margin="3" Padding="14,6"/>
+    </StackPanel>
+   </DockPanel>
+  </Border>
+  <DockPanel Grid.Row="1" Margin="10,4">
+   <Button x:Name="HistoryButton" DockPanel.Dock="Right" Content="Verlauf ▾" Click="History_Click" Padding="12,5" Margin="6,0"/>
+   <Button DockPanel.Dock="Right" Content="＋" Click="NewTab_Click" Width="38" Margin="6,0" ToolTip="Neue unabhängige Sitzung"/>
+   <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled"><StackPanel x:Name="Tabs" Orientation="Horizontal"/></ScrollViewer>
+  </DockPanel>
+  <Grid Grid.Row="2">
+   <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="6"/><ColumnDefinition x:Name="SideColumn" Width="360" MinWidth="290" MaxWidth="700"/></Grid.ColumnDefinitions>
+   <Grid x:Name="BrowserHost"/>
+   <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" Background="{StaticResource Brush.Border}" DragCompleted="Side_Resized"/>
+   <Grid Grid.Column="2" Margin="8,0,10,0">
+    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+    <Border Background="{StaticResource Brush.Card}" BorderBrush="{StaticResource Brush.Border}" BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,0,0,10">
+     <StackPanel>
+      <TextBlock Text="STATUS" Foreground="{StaticResource Brush.TextDim}" FontWeight="SemiBold" Margin="0,0,0,14"/>
+      <StackPanel Orientation="Horizontal"><Ellipse x:Name="StatusLight" Width="9" Height="9" Fill="{StaticResource Brush.Warn}" Margin="0,0,9,0"/><TextBlock x:Name="ConnectionText" Text="Sitzung wird vorbereitet" TextWrapping="Wrap" Width="280"/></StackPanel>
+      <TextBlock x:Name="ProjectText" Margin="0,16,0,4" TextWrapping="Wrap" Foreground="{StaticResource Brush.TextMuted}"/>
+      <TextBlock x:Name="CountsText" Text="Dateibestand wird ermittelt …" FontSize="17" Margin="0,2,0,10"/>
+      <TextBlock x:Name="ContactText" Foreground="{StaticResource Brush.TextDim}" Margin="0,0,0,14"/>
+      <Button x:Name="ConnectButton" Content="Connect" Click="Connect_Click" Padding="14,9" HorizontalAlignment="Stretch"/>
+      <TextBlock x:Name="ConnectHint" TextWrapping="Wrap" Foreground="{StaticResource Brush.TextMuted}" Margin="0,10,0,0"/>
+     </StackPanel>
+    </Border>
+    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><StackPanel x:Name="Panels"/></ScrollViewer>
+   </Grid>
+  </Grid>
+  <Border Grid.Row="3" Background="{StaticResource Brush.Surface}"><TextBlock x:Name="Footer" Margin="14,5" Foreground="{StaticResource Brush.TextDim}" Text="RC30 · unabhängig von rc27 · eigene Profile und Daten"/></Border>
+ </Grid>
+</Window>

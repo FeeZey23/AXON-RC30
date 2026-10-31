@@ -1,0 +1,4 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><TargetFramework>net8.0</TargetFramework><AssemblyName>AXON.Connector</AssemblyName></PropertyGroup>
+  <ItemGroup><ProjectReference Include="../ArenaDesktopCompanion.Core/ArenaDesktopCompanion.Core.csproj"/><EmbeddedResource Include="bridge.mjs"/><EmbeddedResource Include="relay-http.mjs"/></ItemGroup>
+</Project>
