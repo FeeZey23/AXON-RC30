@@ -23,7 +23,12 @@
   "OlderCompanionProcessPreserved": true,
   "AuthenticodeSigned": false,
   "RelayProductionStabilityClaimed": false,
-  "GitHubPublished": false,
+  "GitHubPublished": true,
   "DocumentationUpdatedAfterVerifiedBuild": true,
-  "Note": "Nur Dokumentation/Bildnachweise werden nach dem geprüften Build aktualisiert; Code/Installer-Skripte und geprüftes MSI bleiben unverändert. Dokumentationsverträge werden separat erneut getestet. Keine privaten Pfade, Chat-IDs, PIDs oder Zugangsdaten in diesem Bericht."
+  "Note": "Nach dem geprüften Build werden Dokumentation/Bildnachweise und die SDK-Auswahl der nur manuell startbaren CI aktualisiert; Produktcode, lokale Build-/Installerskripte und geprüftes MSI bleiben unverändert. Dokumentationsverträge werden separat erneut getestet. Keine privaten Pfade, Chat-IDs, PIDs oder Zugangsdaten in diesem Bericht.",
+  "GitHubPrivate": true,
+  "GitHubRepositoryUrl": "https://github.com/FeeZey23/AXON-RC30",
+  "InitialPublishedCommit": "1674520d9eb89807b4d2cc5fc83d9cc83fb318b9",
+  "GitHubActionsTriggered": false,
+  "ManualCiSdkUsesGlobalJson": true
 }

@@ -14,7 +14,7 @@ WPF · WebView2 · .NET 8 · Windows x64 · Connector-DLL · MIT
 
 </div>
 
-> **Releasestatus 31.10.2026:** Der bereinigte ISAS-Quellbaum wurde auf Windows vollständig neu gebaut. **692 Core-, 23 Connector-, 19 Relay- und 75 native UI-Prüfpunkte bestanden, ohne übersprungene native Geste.** Die MSI wurde gebaut, mit getrenntem Installationsziel und Smoke-Daten installiert/geprüft/deinstalliert und anschließend produktiv installiert und gestartet. Acht vorhandene Browserprofile und die Projektzuordnungen blieben erhalten. **Unsigniert; keine OS-VM-Abnahme und keine Garantie für die externe Relayverfügbarkeit.** GitHub-Veröffentlichung weiterhin privat vorgesehen, Eigentümer/Anmeldung noch ausstehend. [Nachweise](docs/RELEASE.EVIDENCE.json).
+> **Releasestatus 31.10.2026:** Der bereinigte ISAS-Quellbaum wurde auf Windows vollständig neu gebaut. **692 Core-, 23 Connector-, 19 Relay- und 75 native UI-Prüfpunkte bestanden, ohne übersprungene native Geste.** Die MSI wurde gebaut, mit getrenntem Installationsziel und Smoke-Daten installiert/geprüft/deinstalliert und anschließend produktiv installiert und gestartet. Acht vorhandene Browserprofile und die Projektzuordnungen blieben erhalten. **Unsigniert; keine OS-VM-Abnahme und keine Garantie für die externe Relayverfügbarkeit.** Der Quellstand ist im [privaten GitHub-Repository](https://github.com/FeeZey23/AXON-RC30) veröffentlicht. [Nachweise](docs/RELEASE.EVIDENCE.json).
 
 ![Bedienstruktur von AXON RC30 – schematische Darstellung, keine Bildschirmaufnahme](docs/images/ui-layout.svg)
 
@@ -138,6 +138,6 @@ Die **frühere Fix4-Basis** bestand 692 Core-Tests, 23 Connector-Prüfpunkte, 19
 
 GitHub zeigt standardmäßig diese README. **[PROJECT.OVERVIEW.md](PROJECT.OVERVIEW.md)** enthält die vollständige Architektur, Bilder, Abläufe, Datenmodell, Sicherheitsgrenzen, Quellmodulkatalog und Abnahmematrix. Eine eigene Pages-Website ist nicht eingerichtet.
 
-Vorgesehen ist das private Repository **`AXON-RC30`** unter einem bestätigten Eigentümeraccount. Veröffentlichung erst nach Datenschutzprüfung, Windows-Installerabnahme und erfolgreicher lokaler Installation. Noch kein Online-Repository wird behauptet. Installer gehören später in Release-Assets, nicht als Binärdateien in die Quellhistorie.
+Veröffentlicht im **[privaten Repository `FeeZey23/AXON-RC30`](https://github.com/FeeZey23/AXON-RC30)** nach Datenschutzprüfung, Windows-Installerabnahme und erfolgreicher lokaler Installation. Die Anmeldung erfolgte mit der offiziellen GitHub CLI; Zugangsdaten bleiben im Windows-Schlüsselspeicher und außerhalb der Quellen. Installer werden ausschließlich als [Release-Assets](https://github.com/FeeZey23/AXON-RC30/releases) bereitgestellt, nicht als Binärdateien in der Quellhistorie. Zugriff nur mit berechtigtem GitHub-Konto. Der Windows-CI-Workflow ist ausschließlich manuell startbar; es wurde für diese Veröffentlichung kein Actions-Lauf ausgelöst.
 
 Lizenz: [MIT](LICENSE), mit erhaltenen ursprünglichen Copyright-Hinweisen. Siehe [Drittanbieterhinweise](THIRD-PARTY-NOTICES.md). ISAS/AXON beschreibt hier das Projekt; eine offizielle Verbindung zu Arena oder Microsoft wird nicht behauptet.

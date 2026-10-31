@@ -4,8 +4,8 @@
 **Technische Basis:** 0.2.0-rc30 / Fix4  
 **Plattform:** Windows x64, WPF, WebView2, .NET 8  
 **Dokumentationsstand:** 31.10.2026  
-**Veröffentlichung:** privates GitHub-Repository vorgesehen, noch nicht veröffentlicht  
-**Reifegrad:** erzwungener Windows-Neubau, native UI, MSI-Install/Deinstall im getrennten Testziel und produktive Installation erfolgreich; unsigniert, GitHub-Anmeldung noch ausstehend
+**Veröffentlichung:** [privates GitHub-Repository `FeeZey23/AXON-RC30`](https://github.com/FeeZey23/AXON-RC30), Quellstand veröffentlicht  
+**Reifegrad:** erzwungener Windows-Neubau, native UI, MSI-Install/Deinstall im getrennten Testziel und produktive Installation erfolgreich; unsigniert, private GitHub-Veröffentlichung technisch bestätigt
 
 > Diese Seite trennt implementierte Funktionen, eine früher geprüfte Fix4-Basis, den neuen bereinigten Quellstand und offene Produktivnachweise. „Implementiert“ bedeutet nicht automatisch „in jeder Umgebung fehlerfrei“. Die aktuelle externe Relaystörung wird weder durch Bilder noch durch historische Testzahlen verdeckt.
 
@@ -407,7 +407,7 @@ Die geplante Payload enthält .NET, nicht das SDK. WebView2 bleibt separat nöti
 7. Installierte Dateien, Fenster, Prozesse und erhaltene Nutzerdaten prüfen.
 8. Erst dann privates GitHub-Repository und optional Release-Asset veröffentlichen.
 
-Diese Reihenfolge wurde bis zur lokalen Installation ausgeführt; die anschließende GitHub-Veröffentlichung benötigt noch den bestätigten Eigentümer und eine autorisierte Anmeldung. Die MSI wurde nach den gefundenen Korrekturen tatsächlich gebaut, mit getrenntem Installationsziel geprüft/deinstalliert und am 31.10.2026 produktiv installiert. Der frühere HTTP-507-Blocker hat sich zwischenzeitlich erholt; eine dauerhafte Transportreparatur ist damit nicht bewiesen. Die separaten Nachweise stehen in docs/RELEASE.EVIDENCE.json.
+Diese Reihenfolge wurde einschließlich privater GitHub-Veröffentlichung ausgeführt. Der erste Quellstand wurde unter `https://github.com/FeeZey23/AXON-RC30` hochgeladen; private Sichtbarkeit und Übereinstimmung des lokalen mit dem entfernten Commit wurden geprüft. Die MSI wurde nach den gefundenen Korrekturen tatsächlich gebaut, mit getrenntem Installationsziel geprüft/deinstalliert und am 31.10.2026 produktiv installiert. Der frühere HTTP-507-Blocker hat sich zwischenzeitlich erholt; eine dauerhafte Transportreparatur ist damit nicht bewiesen. Die separaten Nachweise stehen in docs/RELEASE.EVIDENCE.json.
 
 ### Deinstallation / Rückweg
 
@@ -459,7 +459,7 @@ In Git gehören aktuelle Quellen, Builddefinitionen, notwendige Tests, Installer
 
 Die Agentablage wurde erst nach geprüfter privater Sicherung von alten RC30-Helfern bereinigt. Auf Windows wurden nach gehashter Sicherung von 8.654 Dateien 35 veraltete Einträge entfernt; aktive und vorherige Runtime blieben erhalten. Aktive Runtime, Fallback, rc26/rc27 und Nutzerprojekte sind geschützt. Siehe [CLEANUP.md](docs/CLEANUP.md).
 
-GitHub zeigt die README automatisch; diese Datei ist die verlinkte technische Projektseite. Lokale Bilder vermeiden CDN-Abhängigkeiten. Eine gesonderte Pages-Website ist nicht eingerichtet. Das Zielrepository `AXON-RC30` bleibt zunächst **privat**; Eigentümer und autorisierte Anmeldung sind vor dem Push zu bestätigen. Es werden keine Tokens aus Browserprofilen extrahiert oder private Schlüssel im Chat angefordert.
+GitHub zeigt die README automatisch; diese Datei ist die verlinkte technische Projektseite. Lokale Bilder vermeiden CDN-Abhängigkeiten. Eine gesonderte Pages-Website ist nicht eingerichtet. Das Repository [`FeeZey23/AXON-RC30`](https://github.com/FeeZey23/AXON-RC30) ist **privat**. Persönliches Eigentümerkonto und offizielle CLI-Anmeldung wurden vor dem erfolgreichen Push bestätigt. Die zusätzliche Workflow-Berechtigung wurde ausdrücklich für die manuelle CI-Datei freigegeben; die Veröffentlichung startet keinen Actions-Lauf. Es werden keine Tokens aus Browserprofilen extrahiert oder private Schlüssel im Chat angefordert.
 
 MIT-Lizenz und ursprüngliche Hinweise bleiben erhalten. Abhängigkeiten haben eigene Lizenzbedingungen; die konkrete gebaute Self-contained-Payload ist vor Weiterverteilung zusätzlich zu prüfen. Namen wie Arena und Microsoft beschreiben technische Zusammenhänge, keine behauptete Partnerschaft.
 
