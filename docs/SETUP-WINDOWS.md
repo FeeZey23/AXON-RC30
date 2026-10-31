@@ -1,4 +1,6 @@
-# Windows und Visual Studio einrichten
+# AXON RC30 — Windows und Visual Studio einrichten
+
+Für die vollständige Ersteinrichtung: [Schritt.für.Schritt.Anleitung](STEP-BY-STEP.de.md) · [English Step.by.Step.Guide](STEP-BY-STEP.en.md).
 
 ## Status und Arbeitsordner
 
@@ -14,7 +16,7 @@ Diese Anleitung beschreibt den reproduzierbaren Ablauf. Der Quellordner wurde am
 | Microsoft Edge WebView2 Runtime | Browser im Produkt / UI-Test | Evergreen-Runtime über den offiziellen Microsoft-Weg beziehen. |
 | Node.js 20 oder kompatibel | Connectorintegration / Cloud-Client | Kein zusätzliches npm-Paket für den eingebetteten Client nötig. |
 | PowerShell 5.1 oder neuer | Gepflegte Windows-Skripte | Skripte sind mit UTF-8-BOM für Windows PowerShell gespeichert. |
-| Git | Lokale Versionsverwaltung | GitHub-Anmeldung erst für spätere Veröffentlichung nötig. |
+| Git | Lokale Versionsverwaltung | GitHub-Anmeldung für Zugriff auf das private Repository nötig. |
 | Internetzugang | NuGet, Dotnettool, Arena und Relay | Paket-/Relayverfügbarkeit ist eine externe Abhängigkeit. |
 
 Für das fertige Self-contained-MSI soll beim Endnutzer kein Entwickler-SDK erforderlich sein. Die WebView2-Runtime bleibt eine separate Voraussetzung. Der Installer lädt nicht ungefragt weitere Browserpakete oder bezahlte Dienste nach.
@@ -22,14 +24,14 @@ Für das fertige Self-contained-MSI soll beim Endnutzer kein Entwickler-SDK erfo
 ## Visual Studio öffnen
 
 1. Projektordner unverändert an den freigegebenen Windows-Pfad übertragen.
-2. `ArenaDesktopCompanion.sln` öffnen.
+2. `AXON RC30.sln` öffnen.
 3. Fehlende Desktopworkload über den offiziellen Visual-Studio-Installer ergänzen.
 4. NuGet-Restore abwarten; fehlende Pakete oder Feedfehler nicht durch nicht überprüfte DLL-Downloads ersetzen.
-5. `ArenaDesktopCompanion` als Startprojekt wählen.
+5. **AXON RC30** als Startprojekt wählen.
 6. Konfiguration Debug oder Release, Any CPU wählen; die Auslieferung wird ausdrücklich als win-x64 publiziert.
 7. Neue RC30-Instanz nicht gleichzeitig gegen dieselben produktiven AppData wie eine andere RC30 starten.
 
-Die Solution enthält WPF, Core, Connector-DLL, Core.Tests und AXON.RC30.Integration. Sie ist absichtlich nicht nach der Produktmarke umbenannt, da mehrere Regressionen sie als Wurzelmarker verwenden.
+Die Solution enthält WPF, Core, Connector-DLL, Core.Tests und AXON.RC30.Integration. Der sichtbare Einstieg heißt `AXON RC30.sln`; der historische Solution-Dateiname bleibt zusätzlich als technischer Kompatibilitätsalias für Regressionen/Buildwerkzeuge erhalten.
 
 ## Vollständige Windowsprüfung
 
@@ -73,5 +75,5 @@ Nach Installation Einstellungen, vorhandene Projekte, Tabs, Verlauf und Browserp
 - NuGetfehler: offiziellen Feed/Netz/Proxy prüfen; keine Live-Secrets in Fehlerposts.
 - WebView2 fehlt: Runtime separat offiziell installieren, nicht nur das SDKpaket referenzieren.
 - UI ohne native Freigabe: interaktiven Desktop und Fokus prüfen; nicht die Prüfung fälschen.
-- WiX-/MSIfehler: `.artifacts/checks/msi-build.log` lokal lesen; diese neue Toolchain ist noch unbestätigt.
+- WiX-/MSIfehler: `.artifacts/checks/msi-build.log` lokal lesen; mit dem passenden Prüfstand vergleichen; eine neue Änderung benötigt neue Abnahme.
 - App startet nicht: Crashlog, WebView2 und bereits laufende RC30-Instanz prüfen.

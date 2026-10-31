@@ -1,6 +1,9 @@
-# AXON RC30 (by ISAS) – vollständige Projektübersicht
+# AXON RC30 – Deutsche Beschreibung und vollständige Übersicht
 
-**Produkt:** ISAS - AXON-RC30  
+[Sprachauswahl / Language selection](README.md) · [Schritt.für.Schritt.Anleitung](docs/STEP-BY-STEP.de.md) · [English overview](docs/OVERVIEW.en.md) · [English guide](docs/STEP-BY-STEP.en.md)
+
+**Projektname:** AXON RC30 (by ISAS)  
+**MSI-/Herstellerbezeichnung:** ISAS - AXON-RC30  
 **Technische Basis:** 0.2.0-rc30 / Fix4  
 **Plattform:** Windows x64, WPF, WebView2, .NET 8  
 **Dokumentationsstand:** 31.10.2026  

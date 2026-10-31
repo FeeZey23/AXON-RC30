@@ -1,6 +1,6 @@
 # Prüfnachweise und offene Gates
 
-Stand: 31.10.2026. **Windows-Neubau, MSI-Prüfung und produktive Installation erfolgreich.** GitHub-Veröffentlichung braucht noch Eigentümer und autorisierte Anmeldung. [Maschinenlesbare anonymisierte Nachweise](RELEASE.EVIDENCE.json).
+Stand: 31.10.2026. **Windows-Neubau, MSI-Prüfung und produktive Installation erfolgreich.** Repository und Release sind privat veröffentlicht; Sichtbarkeit, Commit und Asset-Hashes wurden geprüft. [Maschinenlesbare anonymisierte Nachweise](RELEASE.EVIDENCE.json).
 
 ## Tatsächlich ausgeführter neuer Windowslauf
 
@@ -35,7 +35,7 @@ Die 76 Einträge der installierten Smoke-Ausgabe bestehen aus 75 Prüfpunkten un
 - [ ] Vollständige OS-VM-/Upgrade-/Reparaturmatrix.
 - [ ] Reale Mixed-DPI-/Monitor-Abziehmatrix.
 - [ ] Authenticode-Signierweg, falls gewünscht.
-- [ ] Autorisierte private GitHub-Veröffentlichung.
+- [x] Autorisierte private GitHub-Veröffentlichung.
 
 ## Während der Vorbereitung gefundene und nicht versteckte Fehler
 

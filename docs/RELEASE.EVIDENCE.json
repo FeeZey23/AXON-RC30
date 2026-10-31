@@ -25,10 +25,16 @@
   "RelayProductionStabilityClaimed": false,
   "GitHubPublished": true,
   "DocumentationUpdatedAfterVerifiedBuild": true,
-  "Note": "Nach dem geprüften Build werden Dokumentation/Bildnachweise und die SDK-Auswahl der nur manuell startbaren CI aktualisiert; Produktcode, lokale Build-/Installerskripte und geprüftes MSI bleiben unverändert. Dokumentationsverträge werden separat erneut getestet. Keine privaten Pfade, Chat-IDs, PIDs oder Zugangsdaten in diesem Bericht.",
+  "Note": "Nach dem geprüften Build werden Dokumentation, SDK-Auswahl der manuellen CI und sichtbare Solution-Bezeichnungen aktualisiert; Produktcode, interne Identitäten, lokale Build-/Installerskripte und geprüftes MSI bleiben unverändert. Der neue AXON-RC30-Solution-Einstieg verwendet dieselben Projektpfade/-IDs; der historische Einstieg bleibt kompatibel. Dokumentationsverträge werden separat erneut getestet. Keine privaten Pfade, Chat-IDs, PIDs oder Zugangsdaten in diesem Bericht.",
   "GitHubPrivate": true,
   "GitHubRepositoryUrl": "https://github.com/FeeZey23/AXON-RC30",
   "InitialPublishedCommit": "1674520d9eb89807b4d2cc5fc83d9cc83fb318b9",
   "GitHubActionsTriggered": false,
-  "ManualCiSdkUsesGlobalJson": true
+  "ManualCiSdkUsesGlobalJson": true,
+  "DocumentationLanguages": [
+    "en",
+    "de"
+  ],
+  "ReadmeCollapsibleSections": 4,
+  "VisualStudioEntryPoint": "AXON RC30.sln"
 }

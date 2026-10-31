@@ -5,17 +5,17 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6A0266AF-F01F-43EA-8323-9D88FF27D354}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArenaDesktopCompanion", "src\ArenaDesktopCompanion\ArenaDesktopCompanion.csproj", "{7F3EDC5C-872B-4243-A654-29533CB8E4E9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AXON RC30", "src\ArenaDesktopCompanion\ArenaDesktopCompanion.csproj", "{7F3EDC5C-872B-4243-A654-29533CB8E4E9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A4356100-593A-436B-ABD1-28B7E7192EFB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArenaDesktopCompanion.Core.Tests", "tests\ArenaDesktopCompanion.Core.Tests\ArenaDesktopCompanion.Core.Tests.csproj", "{187D616A-3C7E-46FF-AF39-9796BD381DD4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AXON RC30 Core Tests", "tests\ArenaDesktopCompanion.Core.Tests\ArenaDesktopCompanion.Core.Tests.csproj", "{187D616A-3C7E-46FF-AF39-9796BD381DD4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArenaDesktopCompanion.Core", "src\ArenaDesktopCompanion.Core\ArenaDesktopCompanion.Core.csproj", "{7D1B8164-A573-4DCA-9D9C-0AFCDEE50620}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AXON RC30 Core", "src\ArenaDesktopCompanion.Core\ArenaDesktopCompanion.Core.csproj", "{7D1B8164-A573-4DCA-9D9C-0AFCDEE50620}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AXON.Connector", "src\AXON.Connector\AXON.Connector.csproj", "{932F960C-E1D0-45B8-91DD-1EF4725ABB7F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AXON Connector", "src\AXON.Connector\AXON.Connector.csproj", "{932F960C-E1D0-45B8-91DD-1EF4725ABB7F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AXON.RC30.Integration", "tests\AXON.RC30.Integration\AXON.RC30.Integration.csproj", "{46EF4EF9-8E48-4923-9288-3CCE3D7DE1B0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AXON RC30 Integration", "tests\AXON.RC30.Integration\AXON.RC30.Integration.csproj", "{46EF4EF9-8E48-4923-9288-3CCE3D7DE1B0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
