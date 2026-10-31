@@ -20,7 +20,7 @@ public partial class MainWindow
     private void ForgetTab(string id,bool confirm=true)
     {
         var entry=_settings.ClosedWorkspaces.FirstOrDefault(c=>c.Tab.Id==id);if(entry is null)return;
-        if(confirm&&MessageBox.Show(this,"AXON-Tab „"+entry.Tab.Beschriftung()+"“ samt lokalem Browserprofil und AXON-Sitzungsdaten endgültig entfernen?\n\nArena-Chat und Projektdateien bleiben unverändert.","Tab dauerhaft entfernen",MessageBoxButton.YesNo,MessageBoxImage.Warning)!=MessageBoxResult.Yes)return;
+        if(confirm&&MessageBox.Show(this,(_settings.UiLanguage=="en"?"Permanently remove AXON tab "+entry.Tab.Beschriftung()+" and its local browser profile/workspace data?\n\nArena chat and project files remain unchanged.":"AXON-Tab „"+entry.Tab.Beschriftung()+"“ samt lokalem Browserprofil und AXON-Sitzungsdaten endgültig entfernen?\n\nArena-Chat und Projektdateien bleiben unverändert."),L("Tab dauerhaft entfernen"),MessageBoxButton.YesNo,MessageBoxImage.Warning)!=MessageBoxResult.Yes)return;
         if(!ChangeHistory(()=>{if(!TabHistory.Forget(_settings,id))return false;_settings.PendingTabCleanup.Add(id);return true;}))return;
         CleanupForgottenTabs();DrawTabs();
     }

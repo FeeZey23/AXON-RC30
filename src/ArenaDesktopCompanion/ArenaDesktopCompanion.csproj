@@ -26,4 +26,10 @@
     <ProjectReference Include="..\AXON.Connector\AXON.Connector.csproj" />
   </ItemGroup>
 
+  <ItemGroup><Content Include="Product\Apply-Update.ps1" CopyToOutputDirectory="PreserveNewest" /></ItemGroup>
+  <ItemGroup>
+    <Content Include="Product/Empty.gitconfig" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="Product/Publication.gitleaks.toml" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="Product/Publication.gitleaksignore" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>

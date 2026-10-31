@@ -218,9 +218,10 @@ public sealed class BridgeHost : IDisposable
 
             // Authentifizierung, feste Befehlsliste, Pfadschutz und Journal bleiben aktiv.
             RequirePeerConfirmation = true,
-            BefehleErlaubt = true,
-            SchreibendErlaubt = true,
-            VorschlaegeErlaubt = true,
+            BackgroundCommands = true,
+            BefehleErlaubt = _bereich?.AccessProfile is null or "full",
+            SchreibendErlaubt = _bereich?.AccessProfile is null or "write" or "full",
+            VorschlaegeErlaubt = _bereich?.AccessProfile is null or "full",
             AbbildAbstand = TimeSpan.FromSeconds(20),
             HelloAbstand = TimeSpan.FromSeconds(20),
         };
@@ -467,7 +468,7 @@ public sealed class BridgeHost : IDisposable
     {
         var aufruf = job.Program + (job.Argumente is { Count: > 0 } a ? " " + string.Join(' ', a) : string.Empty);
         Meldung?.Invoke("Brücke: Aufruf läuft ohne Rückfrage – " + aufruf);
-        return true;
+        return _bereich?.AccessProfile is null or "full";
     }
 
     /// <summary>Sucht einmal beim Start, welche Werkzeuge vorhanden sind – das ändert sich nicht.</summary>

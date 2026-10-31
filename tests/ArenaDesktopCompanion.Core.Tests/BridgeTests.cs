@@ -15,6 +15,23 @@ public class BridgeTests
 {
     private const string Token = "geheim-1234";
 
+    [Fact]
+    public async Task Background_write_does_not_block_ping_and_does_not_replay()
+    {
+        using var tree=new Support.TempTree();var mailbox=new SammelBriefkasten();using var http=new HttpClient(mailbox);using var relay=new RelayClient(http){Bin="adc-aaaaaaaaaaaaaaaaaaaaaaaa"};
+        using var release=new ManualResetEventSlim();var started=new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);var writes=0;
+        var service=new BridgeService(relay,new CommandRunner(),_=>null,(_,_)=>{started.TrySetResult();if(!release.Wait(TimeSpan.FromSeconds(10)))throw new TimeoutException();Interlocked.Increment(ref writes);return "written";},()=>Token,()=>WorkspaceManifestBuilder.Build(tree.Root)){ProjectRoot=tree.Root,SchreibendErlaubt=true,BackgroundCommands=true};
+        mailbox.Abgelegt[BridgeJob.DateiName("slow-write")]=BridgeProtocol.ToJson(Job("write",path:"a.txt",content:"x",id:"slow-write"));
+        try
+        {
+            await service.TaktAsync().WaitAsync(TimeSpan.FromSeconds(3));await started.Task.WaitAsync(TimeSpan.FromSeconds(3));
+            mailbox.Abgelegt[BridgeJob.DateiName("ping-live")]=BridgeProtocol.ToJson(Job("ping",id:"ping-live"));
+            await service.TaktAsync().WaitAsync(TimeSpan.FromSeconds(3));Assert.True(mailbox.Abgelegt.ContainsKey(BridgeJob.ErgebnisName("ping-live")));Assert.Equal(0,writes);
+        }
+        finally{release.Set();await service.WaitForPublicationAsync();}
+        await service.TaktAsync();await service.WaitForPublicationAsync();Assert.Equal(1,writes);
+    }
+
     // ============================ Abbild ============================
 
     [Fact]

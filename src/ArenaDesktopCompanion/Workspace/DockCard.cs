@@ -21,6 +21,7 @@ public sealed class DockCard : Border
     private Window? _floating;
     private bool _disposing;
     private bool _ownerActive=true;
+    public void ReplaceContent(FrameworkElement content) => _body.Content=content;
     public void CaptureLayout(){if(_floating is{} f&&f.WindowState==WindowState.Normal){Layout.Width=f.Width;Layout.Height=f.Height;Layout.Left=f.Left;Layout.Top=f.Top;}}
     public void SetOwnerActive(bool active){_ownerActive=active;if(_floating is{} f){CaptureLayout();if(active){f.Show();KeepVisible(f);}else f.Hide();}}
     private static void KeepVisible(Window f)
@@ -32,6 +33,7 @@ public sealed class DockCard : Border
     private bool _dragInProgress;
     private readonly string _title;
     private readonly Brush _background;
+    private bool _dragArmed;
     public DockCard(string sessionId, string title, PanelLayout layout, FrameworkElement content)
     {
         SessionId=sessionId;Layout=layout;_title=title;
@@ -43,10 +45,11 @@ public sealed class DockCard : Border
         var close=new Button{Content="×",Width=30,ToolTip="Panel schließen",Padding=new Thickness(2)};DockPanel.SetDock(close,Dock.Right);close.Click+=(_,_)=>Closed?.Invoke(this);header.Children.Add(close);
         var detach=new Button{Content="↗",Width=30,ToolTip="Aus-/wieder andocken",Padding=new Thickness(2)};DockPanel.SetDock(detach,Dock.Right);detach.Click+=(_,_)=>ToggleFloat();header.Children.Add(detach);
         header.Children.Add(new TextBlock{Text=title,VerticalAlignment=VerticalAlignment.Center,Margin=new Thickness(12,0,0,0),FontWeight=FontWeights.SemiBold});
-        header.AddHandler(Mouse.PreviewMouseDownEvent,new MouseButtonEventHandler((_,e)=>{if(e.ChangedButton==MouseButton.Left)_start=e.GetPosition(header);}),true);
-        header.AddHandler(Mouse.PreviewMouseMoveEvent,new MouseEventHandler((_,e)=>{if(e.LeftButton!=MouseButtonState.Pressed||_floating is not null||_dragInProgress||(e.GetPosition(header)-_start).Length<=8)return;_dragInProgress=true;try{DragDrop.DoDragDrop(this,new DataObject("AXON.Panel",this),DragDropEffects.Move);}finally{_dragInProgress=false;}e.Handled=true;}),true);
+        header.AddHandler(Mouse.PreviewMouseDownEvent,new MouseButtonEventHandler((_,e)=>{if(e.ChangedButton==MouseButton.Left){_start=e.GetPosition(header);_dragArmed=true;}}),true);
+        header.AddHandler(Mouse.PreviewMouseMoveEvent,new MouseEventHandler((_,e)=>{if(!_dragArmed||e.LeftButton!=MouseButtonState.Pressed||_floating is not null||_dragInProgress||(e.GetPosition(header)-_start).Length<=8)return;_dragArmed=false;_dragInProgress=true;try{DragDrop.DoDragDrop(this,new DataObject("AXON.Panel",this),DragDropEffects.Move);}finally{_dragInProgress=false;}e.Handled=true;}),true);
+        header.PreviewMouseLeftButtonUp+=(_,_)=>_dragArmed=false;header.LostMouseCapture+=(_,_)=>_dragArmed=false;
         _grid.Children.Add(header);_body=new ContentControl{Content=content,Margin=new Thickness(12,8,12,8)};Grid.SetRow(_body,1);_grid.Children.Add(_body);
-        _resize=new Thumb{Height=6,Cursor=Cursors.SizeNS,Background=(Brush)Application.Current.FindResource("Brush.Border")};Grid.SetRow(_resize,2);_grid.Children.Add(_resize);_resize.DragDelta+=(_,e)=>{_grid.Height=Math.Clamp(_grid.ActualHeight+e.VerticalChange,180,1200);Layout.Height=_grid.Height;LayoutChanged?.Invoke();};
+        _resize=new Thumb{Name="PanelResizeGrip",Height=6,Cursor=Cursors.SizeNS,Background=(Brush)Application.Current.FindResource("Brush.Border")};Grid.SetRow(_resize,2);_grid.Children.Add(_resize);_resize.DragDelta+=(_,e)=>{_grid.Height=Math.Clamp(_grid.ActualHeight+e.VerticalChange,180,1200);Layout.Height=_grid.Height;LayoutChanged?.Invoke();};
         Child=_grid;AllowDrop=true;PreviewDragOver+=(_,e)=>{e.Effects=e.Data.GetData("AXON.Panel") is DockCard candidate&&candidate!=this&&candidate.SessionId==SessionId&&Parent is Panel parent&&candidate.Parent==parent?DragDropEffects.Move:DragDropEffects.None;e.Handled=true;};PreviewDrop+=(_,e)=>{if(e.Data.GetData("AXON.Panel") is DockCard other&&other!=this&&other.SessionId==SessionId&&Parent is Panel parent&&other.Parent==parent){var index=parent.Children.IndexOf(this);parent.Children.Remove(other);parent.Children.Insert(index,other);LayoutChanged?.Invoke();e.Handled=true;}};
     }
     public void ToggleFloat()

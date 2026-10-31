@@ -1,0 +1,6 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:bal="http://wixtoolset.org/schemas/v4/wxs/bal">
+  <Bundle Name="AXON RC30" Manufacturer="ISAS" Version="$(var.ProductVersion)" UpgradeCode="0B7B6AA7-D89E-41BA-9691-1B216DD67AB7" IconSourceFile="$(var.IconPath)">
+    <BootstrapperApplication><bal:WixStandardBootstrapperApplication LicenseUrl="" Theme="hyperlinkLicense" /></BootstrapperApplication>
+    <Chain><MsiPackage SourceFile="$(var.MsiPath)" Compressed="yes" Visible="yes" /></Chain>
+  </Bundle>
+</Wix>

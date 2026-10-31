@@ -15,13 +15,14 @@ Diese Anleitung führt durch Installation, erste bestätigte Verbindung, Alltag,
 ### 2. Installer herunterladen und prüfen
 
 1. Bei GitHub mit einem für dieses **private Repository** berechtigten Konto anmelden. Ein 404 ohne Anmeldung bedeutet nicht, dass das Release gelöscht wurde.
-2. Das [geprüfte Windows-Release](https://github.com/FeeZey23/AXON-RC30/releases/tag/rc30-isas-0.2.304) öffnen.
-3. Unter **Assets** `ISAS-AXON-RC30-0.2.304-win-x64.msi` und die zugehörige `.sha256`-Datei herunterladen. Das Source-ZIP enthält Quellen und ist nicht der Installer.
+2. Das [geprüfte Windows-Release](https://github.com/FeeZey23/AXON-RC30/releases/tag/rc30-isas-0.2.306) öffnen.
+3. Unter **Assets** `ISAS-AXON-RC30-0.2.306-win-x64.msi` und die zugehörige `.sha256`-Datei herunterladen. Das Source-ZIP enthält Quellen und ist nicht der Installer.
 4. PowerShell im Downloadordner öffnen und für **genau dieses Release** prüfen:
 
 ```powershell
-$msi = '.\ISAS-AXON-RC30-0.2.304-win-x64.msi'
-$expected = '80f419d5f98e0a94a9eb57f5dbbb69e85f710e71487d452cebd7c5d01db8ce36'
+$msi = '.\ISAS-AXON-RC30-0.2.306-win-x64.msi'
+$expected = ((Get-Content -LiteralPath ($msi + '.sha256') -Raw).Trim() -split '\s+')[0]
+if ($expected -notmatch '^[a-fA-F0-9]{64}$') { throw 'Invalid SHA-256 file.' }
 $actual = (Get-FileHash -LiteralPath $msi -Algorithm SHA256).Hash.ToLowerInvariant()
 if ($actual -ne $expected) { throw 'SHA-256 stimmt nicht. Nicht installieren.' }
 'Erwarteter SHA-256 stimmt.'
@@ -41,6 +42,11 @@ if ($actual -ne $expected) { throw 'SHA-256 stimmt nicht. Nicht installieren.' }
 
 ### 4. Arbeitsbereich anlegen oder auswählen
 
+In **Einstellungen** die Sprache **Deutsch** oder **English** wählen, bei Bedarf GitHub über die offizielle Gerätecode-Seite verbinden und den offiziellen Repository-Link öffnen. Zugangsdaten werden nicht in AXON-Settings gespeichert. Updateprüfung und Installation sind getrennt: **Update im Repository prüfen**, danach bei angebotenem Update **Update** drücken; nicht während laufender Jobs aktualisieren. Neue Arbeitsbereiche starten nur lesend; das benötigte Berechtigungsprofil bewusst wählen. Lokale Programme haben Windows-Benutzerrechte, keine OS-Isolation.
+
+**Connect** ohne Projekt öffnet einen Dialog: vorhandener Ordner, HTTPS-GitHub-Link oder automatisch erstellen. Automatische Projekte entstehen im *tatsächlichen Programmverzeichnis* unter `.axon/projects/0001.axon.dd-MM-yyyy-HH-mm` mit dauerhaft aufsteigender Nummer. Keine automatische Adminfreigabe und kein stiller Ausweichordner. GitHub-Klonen benötigt Git und führt heruntergeladenen Code nicht aus.
+
+
 1. Einen vorhandenen AXON-Tab auswählen oder über **＋** einen unabhängigen Arbeitsbereich anlegen.
 2. **Einstellungen** öffnen und den tatsächlichen Windows-Ordner des gewünschten Projekts auswählen. Nicht `.arena-inbox`, ein Browserprofil oder den Installationsordner als Abkürzung wählen.
 3. **Vor jedem Schreib-/Buildauftrag** sichtbaren Tab und Projektpfad prüfen.
@@ -57,6 +63,11 @@ if ($actual -ne $expected) { throw 'SHA-256 stimmt nicht. Nicht installieren.' }
 6. Erst danach geplante Schreib-/Buildaktionen freigeben. Keine Passwörter oder API-Tokens im Chat teilen; unbelegtes „verbunden“ nicht als Nachweis akzeptieren.
 
 ### 6. Alltag und spätere Wiederaufnahme
+
+Neue Tabs fragen, ob die Anmeldung gemerkt werden soll: **Ja** behält das unabhängige Profil, **Nein** verwendet ein echtes InPrivate-Profil. Bestehende Profile bleiben erhalten. Externe Links öffnen weitere WebView-Fenster; das Hauptfenster bleibt bei Arena. OAuth-Popups behalten nativen Opener und Profil. Anbieterrestriktionen gelten weiterhin; keine Loginbeschränkungen werden umgangen.
+
+Der Assistent **Projekt als GitHub-Repository veröffentlichen** benötigt GitHub-Anmeldung und Git. Name/Beschreibung eingeben, privaten Standard bewusst beibehalten oder ändern, Dateiliste prüfen, Dateien ausdrücklich auswählen und die Abschlussübersicht bestätigen. Er erstellt nur neue Repositories, überschreibt keine vorhandenen und verändert nicht die Git-Historie deines Projektordners. Dateien zusätzlich selbst prüfen: Kein Scanner garantiert vollständige Secretfreiheit.
+
 
 1. **Projektdateien**, **Protokolle**, **Einstellungen** und **Info** öffnen die jeweiligen Panels. Diese lassen sich andocken, vergrößern und auskoppeln.
 2. Unabhängige Arbeiten in getrennten AXON-Tabs halten und vor folgenreichen Aktionen das Projekt bestätigen. Lokale Befehle nutzen Windows-Benutzerrechte, keine Betriebssystem-Prozessisolation.

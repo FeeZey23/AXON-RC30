@@ -63,6 +63,7 @@ public sealed class AppSettings : IJsonOnDeserialized
 
     public List<ClosedWorkspace> ClosedWorkspaces { get; set; } = [];
     public List<string> PendingTabCleanup { get; set; } = [];
+    public string UiLanguage { get; set; } = "de";
     public int Rc30PreferencesVersion { get; set; }
 
     public void ApplyRc30Preferences()
@@ -157,6 +158,8 @@ public sealed class AppSettings : IJsonOnDeserialized
             BridgeBin = RelayClient.NeuerName(),
             BridgeToken = RelayClient.NeuesKennwort(),
             BridgeEncrypted = true,
+            RememberLogin = null,
+            AccessProfile = "read",
         });
         return Arbeitsbereiche.Count - 1;
     }

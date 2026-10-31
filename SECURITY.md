@@ -25,3 +25,11 @@ Ignore-Regeln und automatischer Privacy-Check sind nur Hilfen. Änderungen, Scre
 ## Experimenteller DOM-Beobachter
 
 Die übernommenen Quellen enthalten `Assets/arena-bot.js` und einen Installer dafür. Dieser experimentelle Beobachter kann DOM-Inhalte/Codekandidaten erkennen. Er ist standardmäßig aus und nicht als offiziell genehmigter Arena-Zugriff zu verstehen. Keine Aktivierung oder Nutzung ohne passende Anbietererlaubnis. Der manuelle Download-/Connectweg ist von dieser Beobachterfunktion getrennt. Opt-in allein ersetzt keine Plattformgenehmigung.
+
+## GitHub, Updates und Projekte ab 0.2.305
+
+Offizieller Updatepfad ist ausschließlich `FeeZey23/AXON-RC30`; private Releases benötigen die lokale offizielle CLI-Anmeldung. Manifest/ProductId/Versionsformat/Assetname und GitHub-Asset-Digest werden geprüft, der heruntergeladene MSI-enthaltende Burn-Bootstrapper wird vor Aufruf erneut gehasht (auch nach Wartezeit auf das alte Programm). Dies schützt nicht vor einer kompromittierten Repository-Eigentümerschaft und ersetzt keine Signatur. Keine automatische Installation allein beim Prüfen.
+
+Upload-Assistent: privater Standard, explizite Dateiauswahl, Prüfung und Abschlussbestätigung; ursprüngliches Projekt-Git bleibt unberührt. Scanner ersetzen keine persönliche Inhaltsprüfung. Projekt-Klonen startet keinen heruntergeladenen Code. Automatische Projektverzeichnisse bleiben bei Deinstallation als Nutzerdaten erhalten. Neue Tabs sind standardmäßig nur lesend; bestehende Freigaben bleiben kompatibel.
+
+Externe WebView-Fenster zeigen die Adresse; erlaubte Hauptnavigation prüft exakten HTTPS-Host statt Zeichenkettenpräfix. OAuth-Opener/Profil werden erhalten; Anbieterbeschränkungen werden nicht umgangen. InPrivate ist Browser-Anmeldepersistenz, keine OS-Isolation oder Zusicherung, dass keinerlei Betriebssystemspuren entstehen.

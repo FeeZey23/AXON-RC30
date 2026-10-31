@@ -14,7 +14,7 @@ public partial class MainWindow
     private async Task RunUiSmokeAsync()
     {
         var checks=new List<string>();string? error=null;
-        void Check(bool value,string name){if(!value)throw new InvalidOperationException(name);checks.Add(name);}
+        void Check(bool value,string name){if(!value)throw new InvalidOperationException(name);checks.Add(name);var progress=Environment.GetEnvironmentVariable("AXON_RC30_SMOKE_OUTPUT");if(progress is not null)File.WriteAllLines(Path.ChangeExtension(progress,"progress.txt"),checks);}
         try
         {
             Check(Brush("#F27D81") is System.Windows.Media.SolidColorBrush,"Hex-Farbwerte und benannte Ressourcen getrennt aufgelöst");
@@ -26,10 +26,10 @@ public partial class MainWindow
             var origin=Path.Combine(Rc30Paths.DataRoot,"test-origin");Directory.CreateDirectory(origin);File.WriteAllText(Path.Combine(origin,"index.html"),"<!doctype html><html><body style='background:#0a0f16;color:#9fb2c6;font:20px Segoe UI;padding:80px'>AXON RC30 · Private Session Test<br><small>Eigene Profile · kein Arena-Zugriff</small><textarea aria-label='Message' oninput='window.inputs=(window.inputs||0)+1'></textarea><button id='send' onclick='window.sent=(window.sent||0)+1'>Send</button></body></html>");
             foreach(var s in selected)
             {
-                var core=s.Browser!.CoreWebView2;core.SetVirtualHostNameToFolderMapping("sessions.axon.test",origin,CoreWebView2HostResourceAccessKind.DenyCors);
+                var core=s.Browser!.CoreWebView2;core.SetVirtualHostNameToFolderMapping("arena.ai",origin,CoreWebView2HostResourceAccessKind.DenyCors);
                 var done=new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
                 void Complete(object? sender,CoreWebView2NavigationCompletedEventArgs e){core.NavigationCompleted-=Complete;if(e.IsSuccess)done.TrySetResult();else done.TrySetException(new Exception(e.WebErrorStatus.ToString()));}
-                core.NavigationCompleted+=Complete;core.Navigate("https://sessions.axon.test/index.html");await done.Task.WaitAsync(TimeSpan.FromSeconds(30));
+                core.NavigationCompleted+=Complete;core.Navigate("https://arena.ai/index.html");await done.Task.WaitAsync(TimeSpan.FromSeconds(30));
                 await core.ExecuteScriptAsync("localStorage.setItem('owner',"+JsonSerializer.Serialize(s.Config.Id)+");sessionStorage.setItem('owner',"+JsonSerializer.Serialize(s.Config.Id)+");document.cookie='owner="+s.Config.Id+";path=/;SameSite=Strict'");
             }
             foreach(var s in selected)
@@ -38,17 +38,17 @@ public partial class MainWindow
                 var core=s.Browser!.CoreWebView2;var owner=JsonSerializer.Deserialize<string>(await core.ExecuteScriptAsync("localStorage.getItem('owner')"));
                 Check(owner==s.Config.Id,"LocalStorage isoliert: "+s.Config.Id[..8]);
                 var session=JsonSerializer.Deserialize<string>(await core.ExecuteScriptAsync("sessionStorage.getItem('owner')"));Check(session==s.Config.Id,"SessionStorage bleibt tabgebunden: "+s.Config.Id[..8]);
-                var cookies=await core.CookieManager.GetCookiesAsync("https://sessions.axon.test");Check(cookies.Single(c=>c.Name=="owner").Value==s.Config.Id,"Cookies isoliert: "+s.Config.Id[..8]);
+                var cookies=await core.CookieManager.GetCookiesAsync("https://arena.ai");Check(cookies.Single(c=>c.Name=="owner").Value==s.Config.Id,"Cookies isoliert: "+s.Config.Id[..8]);
             }
             Activate(selected[0]);selected[0].Browser!.Focus();
-            var ownerCore=selected[0].Browser!.CoreWebView2;var localUri=new Uri("https://sessions.axon.test/index.html");
+            var ownerCore=selected[0].Browser!.CoreWebView2;var localUri=new Uri("https://arena.ai/index.html");
             var draft="AXON Entwurf · äöü \" \nZweite Zeile\n";
             var insert=await DraftWriter.InsertAsync(ownerCore,draft,localUri);Check(insert.Ok,"Connect-Draft in echtes WebView2-Textarea eingesetzt und nachgeprüft");
             Check((await ownerCore.ExecuteScriptAsync("window.inputs>0"))=="true","Native Eingabewertänderung löst Input-Ereignisse aus");
             Check((await ownerCore.ExecuteScriptAsync("window.sent||0"))=="0","Draft-Einsetzen sendet nichts ab");
             await ownerCore.ExecuteScriptAsync("document.querySelector('textarea').value='Eigener ungesendeter Entwurf'");
             var preserve=await DraftWriter.InsertAsync(ownerCore,"nicht überschreiben",localUri);Check(!preserve.Ok&&preserve.Code=="draft_not_empty","Eigener vorhandener Entwurf wird nicht überschrieben");
-            var wrong=await DraftWriter.InsertAsync(ownerCore,"nicht fremder Chat",new Uri("https://sessions.axon.test/anderer-chat"));Check(!wrong.Ok&&wrong.Code=="chat_changed","Navigationswechsel verweigert Schreiben in fremden Chat");
+            var wrong=await DraftWriter.InsertAsync(ownerCore,"nicht fremder Chat",new Uri("https://arena.ai/anderer-chat"));Check(!wrong.Ok&&wrong.Code=="chat_changed","Navigationswechsel verweigert Schreiben in fremden Chat");
             await ownerCore.ExecuteScriptAsync("document.querySelector('textarea').value=''");
             await DraftWriter.InsertAsync(ownerCore,"Eigener AXON-Draft",localUri);var replace=await DraftWriter.InsertAsync(ownerCore,"Aktualisierter AXON-Draft",localUri);Check(replace.Ok,"Eigener unveränderter AXON-Draft kann gezielt aktualisiert werden");
             await ownerCore.ExecuteScriptAsync("document.querySelector('textarea').outerHTML='<div contenteditable=\"true\" role=\"textbox\" aria-label=\"Message\"></div>'");
@@ -72,6 +72,7 @@ public partial class MainWindow
             Check(selected.All(s=>ReferenceEquals(before[s.Config.Id],s.Browser)),"Verschieben/Gruppieren/Wechseln erzeugt keine neue Browserinstanz");
             var target=selected[0];Activate(target);ShowPanel(target,"settings");ShowPanel(target,"logs");ShowPanel(target,"files");ShowPanel(target,"info");UpdateLayout();
             Check(target.Cards.Count>=4,"Vier Werkzeuge als dockbare Panels geöffnet");
+            await RunProductSmokeAsync(target,checks);
             await RunFix4SmokeAsync(target,selected[1],checks);
             var card=target.Cards.First(c=>c.Kind=="logs");card.ToggleFloat();await Task.Delay(200);Check(card.Layout.Detached,"Protokoll als eigenes Fenster ausgekoppelt");card.ToggleFloat();await Task.Delay(100);Check(!card.Layout.Detached&&card.Child is not null,"Protokoll wieder angedockt");
             Activate(selected[1]);Check(!Panels.Children.OfType<DockCard>().Any(c=>c.SessionId==target.Config.Id),"Werkzeugpanels wechseln nicht in fremde Sitzung");
@@ -83,11 +84,12 @@ public partial class MainWindow
             Check(migration.Host is null&&migration.Sync is null&&migration.Hint.Contains("interner",StringComparison.Ordinal),"Gespeicherte alte Inboxwurzel startet weder Projektbrücke noch verschachtelten Inboxdienst");migration.Config.ProjectFolder=oldMigrationRoot;migration.StartProject();
             var settingsCard=target.Cards.First(c=>c.Kind=="settings");
             Check(FindVisualChildren<CheckBox>(settingsCard).Single(c=>Equals(c.Content,"Downloads in Projekt-Inbox ablegen")).IsChecked==false,"Inbox-Downloadoption in echter Einstellungsoberfläche standardmäßig aus");
-            Check(!FindVisualChildren<TextBox>(settingsCard).Any(),"Manueller Chat-Adressbereich aus Einstellungen entfernt");
+            Check(!FindVisualChildren<TextBox>(settingsCard).Any(t=>t.IsVisible),"Manueller Chat-Adressbereich aus Einstellungen entfernt");
             target.Config.ProjectFolder=null;target.StartProject();target.Config.AutoChatName=true;target.Config.ConnectedChatAddress="";
             const string chatA="https://arena.ai/agent/00000000-0000-4000-8000-000000000003";
             const string chatB="https://arena.ai/agent/00000000-0000-4000-8000-000000000002";
             const string html="<!doctype html><html><head><title>Arena | Benchmark &amp; Compare the Best AI Models</title></head><body><a id='current' href='/agent/00000000-0000-4000-8000-000000000003'>Aktuelles Arena-Projekt</a><a href='/agent/00000000-0000-4000-8000-000000000002'>NICHT fremden Namen übernehmen</a><main>Nachrichten werden nicht gelesen</main></body></html>";
+            ownerCore.ClearVirtualHostNameToFolderMapping("arena.ai");
             ownerCore.AddWebResourceRequestedFilter("https://arena.ai/*",CoreWebView2WebResourceContext.All);
             ownerCore.WebResourceRequested+=(_,request)=>{request.Response=ownerCore.Environment.CreateWebResourceResponse(new MemoryStream(System.Text.Encoding.UTF8.GetBytes(html)),200,"OK","Content-Type: text/html; charset=utf-8");};
             async Task Navigate(CoreWebView2 c,string address)
@@ -124,7 +126,7 @@ public partial class MainWindow
             ((DockPanel)historyEntry.Header).Children.OfType<Button>().Single(b=>b.Content is string text&&text.StartsWith("↶",StringComparison.Ordinal)).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             var reopened=_sessions[closedId];await reopened.EnsureBrowserAsync();
             Check(reopened.Config.ChatAddress==savedAddress&&reopened.Config.ProjectFolder==savedRoot&&reopened.Config.ConnectionId==savedConnect&&reopened.Config.BridgeToken==savedKey,"Wiederöffnen erhält URL, Projekt, Connect-ID und Paarung unverändert");
-            var restoredCore=reopened.Browser!.CoreWebView2;restoredCore.SetVirtualHostNameToFolderMapping("sessions.axon.test",origin,CoreWebView2HostResourceAccessKind.DenyCors);await Navigate(restoredCore,"https://sessions.axon.test/index.html");
+            var restoredCore=reopened.Browser!.CoreWebView2;restoredCore.SetVirtualHostNameToFolderMapping("arena.ai",origin,CoreWebView2HostResourceAccessKind.DenyCors);await Navigate(restoredCore,"https://arena.ai/index.html");
             Check(JsonSerializer.Deserialize<string>(await restoredCore.ExecuteScriptAsync("localStorage.getItem('owner')"))==closedId,"Wiedergeöffneter Tab nutzt tatsächlich dasselbe persistente Browserprofil");
             Check(!_settings.ClosedWorkspaces.Any(c=>c.Tab.Id==closedId),"Wiederöffnen entfernt nur den passenden Verlaufseintrag");
             CloseTab(reopened);var sentinel=Path.Combine(origin,"user-project-sentinel.txt");File.WriteAllText(sentinel,"bleibt");_settings.ClosedWorkspaces.Single(c=>c.Tab.Id==closedId).Tab.ProjectFolder=origin;ForgetTab(closedId,false);

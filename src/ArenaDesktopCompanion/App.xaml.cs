@@ -120,7 +120,7 @@ public partial class App : System.Windows.Application
         // Datei:Zeile ist jede Reparatur Raten (Fund N-20, Text kommt aus dem Core und ist getestet).
         MessageBox.Show(
             ExceptionFormatting.CrashDialogText(error, logFile),
-            "Arena Companion – Fehler",
+            "AXON RC30 – Fehler",
             MessageBoxButton.OK,
             MessageBoxImage.Error);
     }

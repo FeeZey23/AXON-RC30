@@ -28,6 +28,7 @@ public partial class ConflictsWindow : Window
     public ConflictsWindow(string root, SyncPolicy policy)
     {
         InitializeComponent();
+        Loaded+=(_,_)=>Product.UiText.Apply(this);
         _root = root;
         _policy = policy;
         Refresh();
@@ -48,12 +49,12 @@ public partial class ConflictsWindow : Window
 
         if (rows.Count == 0)
         {
-            TxtHint.Text = "Keine offenen Konflikte. Was die App nicht einfach überschreiben durfte, ist erledigt.";
+            TxtHint.Text = Product.UiText.Translate("Keine offenen Konflikte. Was die App nicht einfach überschreiben durfte, ist erledigt.");
             ClearPanes();
             return;
         }
 
-        TxtHint.Text = $"{rows.Count} Datei(en) unterscheiden sich von deinem Stand. Entscheide pro Datei – " +
+        TxtHint.Text = App.Services.Settings.UiLanguage=="en"?$"{rows.Count} file(s) differ from your copy. Decide per file — nothing is overwritten without your review.":$"{rows.Count} Datei(en) unterscheiden sich von deinem Stand. Entscheide pro Datei – " +
                        "nichts wird überschrieben, ohne dass du es hier gesehen hast.";
 
         var restore = rows.FirstOrDefault(r => string.Equals(r.Item.Id, selected, StringComparison.Ordinal)) ?? rows[0];
@@ -66,7 +67,7 @@ public partial class ConflictsWindow : Window
         TxtMine.Text = string.Empty;
         TxtArena.Text = string.Empty;
         TxtDiff.Text = string.Empty;
-        TxtDiffLabel.Text = "kein Eintrag ausgewählt";
+        TxtDiffLabel.Text = Product.UiText.Translate("kein Eintrag ausgewählt");
     }
 
     private void LstConflicts_SelectionChanged(object sender, SelectionChangedEventArgs e)

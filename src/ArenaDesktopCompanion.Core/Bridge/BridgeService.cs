@@ -337,12 +337,16 @@ public sealed class BridgeService
     /// <summary>
     /// Ein Durchgang. Gibt zurück, was passiert ist – für das Protokoll im Fenster.
     /// </summary>
+    public bool BackgroundCommands { get; set; }
+    public bool HasRunningCommands => _commandJobs.Values.Any(t=>!t.IsCompleted);
+    private readonly ConcurrentDictionary<string,Task> _commandJobs=new();
+    private readonly SemaphoreSlim _commandGate=new(1,1);
     private Task? _publikation;
     private readonly SemaphoreSlim _publicationGate=new(1,1);
     private readonly ConcurrentDictionary<string,Task> _manifestJobs=new();
     private readonly ConcurrentQueue<BridgeRunInfo> _completed=new();
     private readonly object _historyGate=new();
-    public Task WaitForPublicationAsync() => Task.WhenAll(_manifestJobs.Values.Append(_publikation??Task.CompletedTask));
+    public Task WaitForPublicationAsync() => Task.WhenAll(_manifestJobs.Values.Concat(_commandJobs.Values).Append(_publikation??Task.CompletedTask));
     private void Record(BridgeRunInfo info)
     {
         lock(_historyGate){_verlauf.Add(info);if(_verlauf.Count>400)_verlauf.RemoveAt(0);}
@@ -353,6 +357,21 @@ public sealed class BridgeService
         try {var info=await ErledigeAsync(job,token).ConfigureAwait(false);Record(info);_completed.Enqueue(info);lock(_peerGate){if(PeerConfirmed&&info.Ok){PeerLastSeen=DateTimeOffset.UtcNow;PeerRestored=false;}}AcceptedJob?.Invoke(job);}
         catch(OperationCanceledException) when(token.IsCancellationRequested) { }
         catch(Exception ex) when(ex is not OutOfMemoryException){LetzterFehler=ex.Message;_log?.Invoke("Abbildauftrag: "+ex.Message);}
+    }
+    private async Task RunQueuedCommandAsync(BridgeJob job,string root,string connection,CancellationToken token)
+    {
+        var held=false;
+        try
+        {
+            await _commandGate.WaitAsync(token).ConfigureAwait(false);held=true;await Task.Yield();
+            if(ConnectionId!=connection||ProjektOrdnerJetzt()!=root) { await MeldeAsync(job,"abgelehnt",null,-1,0,"Binding changed while queued; no action executed.",token).ConfigureAwait(false);return; }
+            var info=await ErledigeAsync(job,token).ConfigureAwait(false);Record(info);_completed.Enqueue(info);
+            lock(_peerGate){if(PeerConfirmed&&info.Ok){PeerLastSeen=DateTimeOffset.UtcNow;PeerRestored=false;}}
+            AcceptedJob?.Invoke(job);
+        }
+        catch(OperationCanceledException) when(token.IsCancellationRequested){}
+        catch(Exception ex) when(ex is not OutOfMemoryException){LetzterFehler=ex.Message;_log?.Invoke("Queued command: "+ex.Message);}
+        finally{if(held)_commandGate.Release();}
     }
     public string? PublikationsFehler { get; private set; }
     private readonly object _peerGate=new();
@@ -374,6 +393,7 @@ public sealed class BridgeService
         while(_completed.TryDequeue(out var completed))neu.Add(completed);
         foreach(var pair in _manifestJobs.Where(p=>p.Value.IsCompleted).ToArray())_manifestJobs.TryRemove(pair.Key,out _);
         if (!RelayClient.NameIstGueltig(_relay.Bin)) return neu;
+        foreach(var pair in _commandJobs.Where(p=>p.Value.IsCompleted).ToArray())_commandJobs.TryRemove(pair.Key,out _);
         Takte++;
         try
         {
@@ -406,7 +426,7 @@ public sealed class BridgeService
                 // Each message has its own failure boundary. Poison messages cannot block the queue.
                 try
                 {
-                    if(_manifestJobs.ContainsKey(id))continue;
+                    if(_manifestJobs.ContainsKey(id)||_commandJobs.ContainsKey(id))continue;
                     if (_gedaechtnis.Kenne(id) || Journal?.State(id) is not null)
                     {
                         if (!dateien.Any(d => d.Name == BridgeJob.ErgebnisName(id)))
@@ -439,6 +459,14 @@ public sealed class BridgeService
                         if(_manifestJobs.Count>=8){await MeldeAsync(job,"fehler",null,-1,0,"Zu viele parallele Abbildaufträge (maximal 8).",cancellationToken).ConfigureAwait(false);continue;}
                         _manifestJobs[id]=Task.CompletedTask;
                         _manifestJobs[id]=Task.Run(()=>RunManifestJobAsync(job,cancellationToken),CancellationToken.None);
+                        continue;
+                    }
+                    if(BackgroundCommands && job.KindAlsEnum is JobKind.Run or JobKind.Vorschlag or JobKind.Write)
+                    {
+                        if(_commandJobs.Count>=8){await MeldeAsync(job,"fehler",null,-1,0,"Command queue full (max 8); no action executed.",cancellationToken).ConfigureAwait(false);continue;}
+                        var project=ProjektOrdnerJetzt();var connection=ConnectionId;
+                        _commandJobs[id]=Task.CompletedTask;
+                        _commandJobs[id]=RunQueuedCommandAsync(job,project,connection,cancellationToken);
                         continue;
                     }
                     var info = await ErledigeAsync(job, cancellationToken).ConfigureAwait(false);
@@ -745,8 +773,7 @@ public sealed class BridgeService
 
                 case JobKind.Vorschlag:
                 {
-                    // Der Nutzer entscheidet – ohne sein Ja passiert hier nichts. Die Frage steht auf
-                    // seinem Bildschirm, mit dem vollständigen Aufruf und dem Zweck.
+                    // The host enforces the explicitly selected session access profile. No per-job popup.
                     var erlaubt = false;
                     try
                     {

@@ -28,6 +28,9 @@ public sealed class Arbeitsbereich
     [JsonPropertyName("sideWidth")] public double SideWidth { get; set; } = 360;
 
     public string ConnectedChatAddress { get; set; } = "";
+    public bool? RememberLogin { get; set; } = true;
+    public string AccessProfile { get; set; } = "full";
+    public string RepositoryUrl { get; set; } = "";
     public bool AutoImport { get; set; } = true;
     public bool RouteDownloads { get; set; }
     public bool AutoChatName { get; set; } = true;

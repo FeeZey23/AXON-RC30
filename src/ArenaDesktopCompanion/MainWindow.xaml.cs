@@ -27,6 +27,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        Title="ISAS - AXON RC30 · "+Core.Product.ProductPolicy.CurrentVersion.ToString(3);
         _timer.Tick+=(_,_)=>RefreshStatus();
         var menu=new ContextMenu();var tree=new MenuItem{Header="Workspace-Dateibaum öffnen"};tree.Click+=(_,_)=>{if(_active is{} s)ShowPanel(s,"files");};menu.Items.Add(tree);
         // The normal click opens Explorer; right-click offers the optional workspace tree.
@@ -87,14 +88,14 @@ public partial class MainWindow : Window
     {try{await session.EnsureBrowserAsync();if(_active==session&&!session.Disposed&&!_closing){ShowBrowser(session);session.RefreshChatName();}}catch(Exception ex){session.Log(ex.Message,"ERROR");}}
     private void DrawTabs()
     {
-        Tabs.Children.Clear();HistoryButton.Content="Verlauf ▾"+(_settings.ClosedWorkspaces.Count>0?" ("+_settings.ClosedWorkspaces.Count+")":"");
+        Tabs.Children.Clear();HistoryButton.Content=L("Verlauf ▾")+(_settings.ClosedWorkspaces.Count>0?" ("+_settings.ClosedWorkspaces.Count+")":"");
         foreach(var tab in _settings.Arbeitsbereiche)
         {
             var session=_sessions[tab.Id];
             var frame=new Border{CornerRadius=new CornerRadius(6),Background=Brush(_active==session?"Brush.Selected":"Brush.Surface"),BorderBrush=Brush(_active==session?"Brush.Accent":"Brush.Border"),BorderThickness=new Thickness(1),Margin=new Thickness(0,0,6,0),AllowDrop=true};
             var row=new StackPanel{Orientation=Orientation.Horizontal};
             var label=(tab.Group.Length>0?tab.Group+" / ":"")+tab.Beschriftung();
-            var select=new Button{Content=new TextBlock{Text=label,TextTrimming=TextTrimming.CharacterEllipsis},MaxWidth=300,Tag=tab.Id,Padding=new Thickness(12,8,8,8),MinWidth=100,ToolTip=tab.Beschriftung()+"\n"+tab.ChatAddress+"\nEigene Sitzung · "+tab.Id+"\n"+tab.ProjectFolder};select.Click+=(_,_)=>Activate(session);
+            var select=new Button{Content=new TextBlock{Text=label,Tag="UserContent",TextTrimming=TextTrimming.CharacterEllipsis},MaxWidth=300,Tag=tab.Id,Padding=new Thickness(12,8,8,8),MinWidth=100,ToolTip=tab.Beschriftung()+"\n"+tab.ChatAddress+"\n"+L("Eigene Sitzung")+" · "+tab.Id+"\n"+tab.ProjectFolder};select.Click+=(_,_)=>Activate(session);
             System.Windows.Automation.AutomationProperties.SetAutomationId(select,"Tab-"+tab.Id);
             select.PreviewMouseLeftButtonDown+=(_,e)=>_dragOrigin=e.GetPosition(select);
             select.PreviewMouseMove+=(_,e)=>{if(e.LeftButton==MouseButtonState.Pressed&&(e.GetPosition(select)-_dragOrigin).Length>10)DragDrop.DoDragDrop(select,new DataObject("AXON.Tab",tab.Id),DragDropEffects.Move);};
@@ -106,7 +107,7 @@ public partial class MainWindow : Window
             var login=new MenuItem{Header="Arena-Anmeldung übernehmen von …"};
             foreach(var other in _sessions.Values.Where(o=>o!=session))
             {
-                var source=other;var choice=new MenuItem{Header=source.Config.Beschriftung()};choice.Click+=async(_,_)=>{try{await source.EnsureBrowserAsync();await session.EnsureBrowserAsync();if(source.Disposed||session.Disposed)return;var n=await ArenaLoginBootstrap.CopyAsync(source.Browser!.CoreWebView2,session.Browser!.CoreWebView2,true);session.Hint=n>0?"Arena-Anmeldung übernommen; Seite wird neu geladen.":"Quelle hat keine Arena-Cookies; dort zuerst anmelden.";if(n>0)session.Browser.CoreWebView2.Reload();}catch(Exception ex){session.Hint=ex.Message;session.Log(ex.Message,"ERROR");}};login.Items.Add(choice);
+                var source=other;var choice=new MenuItem{Header=source.Config.Beschriftung(),Tag="UserContent"};choice.Click+=async(_,_)=>{try{await source.EnsureBrowserAsync();await session.EnsureBrowserAsync();if(source.Disposed||session.Disposed)return;var n=await ArenaLoginBootstrap.CopyAsync(source.Browser!.CoreWebView2,session.Browser!.CoreWebView2,true);session.Hint=n>0?"Arena-Anmeldung übernommen; Seite wird neu geladen.":"Quelle hat keine Arena-Cookies; dort zuerst anmelden.";if(n>0)session.Browser.CoreWebView2.Reload();}catch(Exception ex){session.Hint=ex.Message;session.Log(ex.Message,"ERROR");}};login.Items.Add(choice);
             }
             context.Items.Add(login);
             var explorer=new MenuItem{Header="Projekt im Explorer"};explorer.Click+=(_,_)=>OpenProject(session);context.Items.Add(explorer);select.ContextMenu=context;
@@ -140,12 +141,13 @@ public partial class MainWindow : Window
         var light=ConnectionHealth.Evaluate(session.Host?.Laeuft==true,service?.LetzterFehler,service?.PeerConfirmed==true&&service.PeerRestored==false,service?.PeerLastSeen,DateTimeOffset.UtcNow);
         session.Connector.Observe(light);
         StatusLight.Fill=Brush(light==ConnectionLight.Green?"Brush.Success":light==ConnectionLight.Red?"Brush.Danger":"Brush.Warn");
-        ConnectionText.Text=session.ProjectError is{} problem?"Tab gestört: "+problem:session.Host?.Status??"Projekt noch nicht eingerichtet";
+        ConnectionText.Text=session.ProjectError is{} problem?L("Tab gestört")+": "+problem:session.Host?.Status??"Projekt noch nicht eingerichtet";
         ProjectText.Text=session.Config.ProjectFolder??"Projekt in Einstellungen auswählen";
-        CountsText.Text=!session.ScanComplete?"Dateibestand wird ermittelt …":session.FileCount==0?"0 Projektdateien · Ordner noch leer":$"{session.FileCount:N0} Dateien  /  {session.ByteCount/1048576d:N1} MB";
-        ContactText.Text=service?.PeerLastSeen is{} peer?$"Chat-Kontakt {peer.ToLocalTime():HH:mm:ss}":service?.LetzterKontakt is{} contact?$"Relay erreichbar {contact:HH:mm:ss} · Chat unbestätigt":"Noch kein Kontakt";
+        CountsText.Text=!session.ScanComplete?"Dateibestand wird ermittelt …":session.FileCount==0?"0 Projektdateien · Ordner noch leer":$"{session.FileCount:N0} {(_settings.UiLanguage=="en"?"files":"Dateien")}  /  {session.ByteCount/1048576d:N1} MB";
+        ContactText.Text=service?.PeerLastSeen is{} peer?$"{L("Chat-Kontakt")} {peer.ToLocalTime():HH:mm:ss}":service?.LetzterKontakt is{} contact?$"{L("Relay erreichbar")} {contact:HH:mm:ss} · {L("Chat unbestätigt")}":"Noch kein Kontakt";
         ConnectButton.IsEnabled=!session.Connecting;ConnectButton.Content=session.Connecting?"Vorbereiten …":"Connect";
-        ConnectHint.Text=session.Hint;Footer.Text="RC30 · "+session.Config.Beschriftung()+" · eigenes Browserprofil · "+(service?.PublikationsFehler is{} err?"Dateiabgleich: "+err:"Sitzungen unabhängig");
+        Product.UiText.Apply(this);
+        ConnectHint.Text=Product.UiText.Translate(session.Hint);Footer.Text="RC30 · "+session.Config.Beschriftung()+" · "+L("eigenes Browserprofil")+" · "+(service?.PublikationsFehler is{} err?L("Dateiabgleich")+": "+err:L("Sitzungen unabhängig"));
     }
     private async void Connect_Click(object sender,RoutedEventArgs e)
     {
@@ -153,7 +155,7 @@ public partial class MainWindow : Window
         session.Connecting=true;
         try
         {
-            if(!Directory.Exists(session.Config.ProjectFolder)){ShowPanel(session,"settings");session.Hint="Zuerst den Projektordner wählen.";return;}
+            if(!Directory.Exists(session.Config.ProjectFolder)&&!await ChooseProjectAsync(session))return;
             await session.EnsureBrowserAsync();
             if(session.Disposed||_active!=session)throw new InvalidOperationException("Tab gewechselt; Connect für den gewählten Tab erneut auslösen.");
             var address=session.Browser?.CoreWebView2?.Source;
@@ -219,11 +221,11 @@ public partial class MainWindow : Window
     }
     private FrameworkElement BuildSettings(TabSession s)
     {
-        var box=new StackPanel();box.Children.Add(Label("PROJEKT DIESER SITZUNG"));
+        var box=new StackPanel();AddProductSettings(s,box);box.Children.Add(Label("PROJEKT DIESER SITZUNG"));
         var root=new TextBlock{Text=s.Config.ProjectFolder??"Noch nicht gewählt",TextWrapping=TextWrapping.Wrap,Margin=new Thickness(0,6,0,8)};box.Children.Add(root);
         box.Children.Add(ActionButton("Projekt auswählen …",()=>
         {
-            if(s.Connecting)return;var dialog=new Microsoft.Win32.OpenFolderDialog{Title="Projekt für "+s.Config.Beschriftung(),InitialDirectory=s.Config.ProjectFolder??Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)};
+            if(s.Connecting)return;var dialog=new Microsoft.Win32.OpenFolderDialog{Title=L("Projekt für")+" "+s.Config.Beschriftung(),InitialDirectory=s.Config.ProjectFolder??Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)};
             if(dialog.ShowDialog(this)!=true)return;
             var folder=Path.GetFullPath(dialog.FolderName);
             if(!string.Equals(folder,s.Config.ProjectFolder,StringComparison.OrdinalIgnoreCase))
@@ -232,6 +234,7 @@ public partial class MainWindow : Window
             }
             root.Text=folder;
         }));
+        box.Children.Add(AsyncButton("Projekt öffnen",async()=>{await ChooseProjectAsync(s);}));
         var auto=new CheckBox{Content="Projekt-Downloads automatisch übernehmen",IsChecked=s.Config.AutoImport,Margin=new Thickness(0,16,0,8)};
         auto.Checked+=(_,_)=>{s.Config.AutoImport=true;s.ApplyOptions();Save();};auto.Unchecked+=(_,_)=>{s.Config.AutoImport=false;s.ApplyOptions();Save();};box.Children.Add(auto);
         var downloads=new CheckBox{Content="Downloads in Projekt-Inbox ablegen",IsChecked=s.Config.RouteDownloads,Margin=new Thickness(0,0,0,12)};
@@ -274,20 +277,21 @@ public partial class MainWindow : Window
     }
     private FrameworkElement BuildInfo(TabSession s)
     {
-        var text="AXON RC30\n\nUnabhängig von rc27. Connector: AXON.Connector.dll. Verschlüsselter Dateibriefkasten, projektgebundene Aufträge, persistentes Journal und Pflichtsicherung. Keine Prozess-Sandbox.\n\nConnect setzt den Übergabetext auf deinen Klick ins Eingabefeld; absenden musst du selbst. Nur aktuelle Chat-URL und aktueller Chatname werden erkannt; keine Nachrichtenauslese oder Verlaufsextraktion. Neue Tabs übernehmen einmalig Arena-Cookies aus dem aktiven RC30-Tab; danach bleiben Profile getrennt. Shift+Plus startet ohne Übernahme.\n\nEin vollständiges Chatname.md-Archiv wird nicht vorgetäuscht. Die lokalen Ereignisse werden pro Sitzung protokolliert.\n\nRC30-Daten: "+Rc30Paths.DataRoot+"\n\nBrowserprofil: "+Rc30Paths.ProfileFolder(s.Config.Id);
+        var text=_settings.UiLanguage=="en"?"AXON RC30\n\nIndependent of rc27. Connector: AXON.Connector.dll. Encrypted file relay, project-bound jobs, persistent journal and mandatory backups. No process sandbox.\n\nConnect inserts the handover text into the current editor after your click; you send it yourself. Only the current chat URL/title are detected; no message extraction. New tabs can copy Arena cookies once from the active RC30 tab, then profiles remain independent. Shift+Plus skips copying.\n\nA full chat archive is not claimed. Local workspace events are logged separately.\n\nRC30 data: "+Rc30Paths.DataRoot+"\n\nBrowser profile: "+Rc30Paths.ProfileFolder(s.Config.Id):"AXON RC30\n\nUnabhängig von rc27. Connector: AXON.Connector.dll. Verschlüsselter Dateibriefkasten, projektgebundene Aufträge, persistentes Journal und Pflichtsicherung. Keine Prozess-Sandbox.\n\nConnect setzt den Übergabetext auf deinen Klick ins Eingabefeld; absenden musst du selbst. Nur aktuelle Chat-URL und aktueller Chatname werden erkannt; keine Nachrichtenauslese oder Verlaufsextraktion. Neue Tabs übernehmen einmalig Arena-Cookies aus dem aktiven RC30-Tab; danach bleiben Profile getrennt. Shift+Plus startet ohne Übernahme.\n\nEin vollständiges Chatname.md-Archiv wird nicht vorgetäuscht. Die lokalen Ereignisse werden pro Sitzung protokolliert.\n\nRC30-Daten: "+Rc30Paths.DataRoot+"\n\nBrowserprofil: "+Rc30Paths.ProfileFolder(s.Config.Id);
         return new ScrollViewer{Content=new TextBlock{Text=text,TextWrapping=TextWrapping.Wrap,Foreground=Brush("Brush.TextMuted")},VerticalScrollBarVisibility=ScrollBarVisibility.Auto};
     }
-    private static TextBlock Label(string text)=>new(){Text=text,FontWeight=FontWeights.SemiBold,FontSize=11};
-    private Button ActionButton(string title,Action action){var b=new Button{Content=title,Padding=new Thickness(9,6,9,6),Margin=new Thickness(0,0,6,6)};b.Click+=(_,_)=>{try{action();}catch(Exception ex){Report(ex);}};return b;}
+    private static TextBlock Label(string text)=>new(){Text=L(text),FontWeight=FontWeights.SemiBold,FontSize=11};
+    private Button ActionButton(string title,Action action){var b=new Button{Content=L(title),Padding=new Thickness(9,6,9,6),Margin=new Thickness(0,0,6,6)};b.Click+=(_,_)=>{try{action();}catch(Exception ex){Report(ex);}};return b;}
     private string? AskText(string title,string initial)
     {
-        var field=new TextBox{Text=initial,Margin=new Thickness(16),Padding=new Thickness(8)};var panel=new StackPanel();panel.Children.Add(field);var dialog=new Window{Title=title,Width=420,SizeToContent=SizeToContent.Height,Owner=this,WindowStartupLocation=WindowStartupLocation.CenterOwner,ResizeMode=ResizeMode.NoResize,Background=Brush("Brush.Surface"),Foreground=Brush("Brush.Text")};
-        var ok=new Button{Content="Übernehmen",IsDefault=true,Margin=new Thickness(16,0,16,16),Padding=new Thickness(8)};ok.Click+=(_,_)=>dialog.DialogResult=true;panel.Children.Add(ok);dialog.Content=panel;dialog.Loaded+=(_,_)=>{field.Focus();field.SelectAll();};return dialog.ShowDialog()==true?field.Text:null;
+        var field=new TextBox{Text=initial,Margin=new Thickness(16),Padding=new Thickness(8)};var panel=new StackPanel();panel.Children.Add(field);var dialog=new Window{Title=L(title),Width=420,SizeToContent=SizeToContent.Height,Owner=this,WindowStartupLocation=WindowStartupLocation.CenterOwner,ResizeMode=ResizeMode.NoResize,Background=Brush("Brush.Surface"),Foreground=Brush("Brush.Text")};
+        var ok=new Button{Content=L("Übernehmen"),IsDefault=true,Margin=new Thickness(16,0,16,16),Padding=new Thickness(8)};ok.Click+=(_,_)=>dialog.DialogResult=true;panel.Children.Add(ok);dialog.Content=panel;dialog.Loaded+=(_,_)=>{field.Focus();field.SelectAll();};return dialog.ShowDialog()==true?field.Text:null;
     }
     private void OpenPath(string path){try{Process.Start(new ProcessStartInfo(path){UseShellExecute=true});}catch(Exception ex){Report(ex);}}
     private void Report(Exception ex){App.Services.Logger.Write("ERROR",ex.ToString());if(_active is{} s){s.Hint=ex.Message;s.Log(ex.Message,"ERROR");}else Footer.Text=ex.Message;}
     private void Window_Closing(object? sender,CancelEventArgs e)
     {
+        _productLifetime.Cancel();
         _closing=true;_timer.Stop();Save();BrowserHost.Children.Clear();foreach(var session in _sessions.Values)session.Dispose();
     }
 }

@@ -26,7 +26,7 @@ public partial class MainWindow
             Check(MonitorPlacement.PhysicallyInside(f,monitor.Handle,monitor.Physical),"Fix4: Floating-Fenster auf echtem Monitor vollständig innerhalb Arbeitsfläche: "+monitor.Physical+"; DPI="+System.Windows.Media.VisualTreeHelper.GetDpi(f).DpiScaleX.ToString(System.Globalization.CultureInfo.InvariantCulture));
         }
         card.ToggleFloat();await Task.Delay(100);
-        var thumb=FindVisualChildren<Thumb>(card).Single();var prior=card.Layout.Height;thumb.RaiseEvent(new DragDeltaEventArgs(0,35){RoutedEvent=Thumb.DragDeltaEvent});Check(card.Layout.Height>prior,"Fix4: Echter WPF-Thumb-DragDelta ändert und speichert Panelhöhe");
+        var thumb=FindVisualChildren<Thumb>(card).Single(t=>t.Name=="PanelResizeGrip");var prior=card.Layout.Height;thumb.RaiseEvent(new DragDeltaEventArgs(0,35){RoutedEvent=Thumb.DragDeltaEvent});Check(card.Layout.Height>prior,"Fix4: Echter WPF-Thumb-DragDelta ändert und speichert Panelhöhe");
         var badRoot=Path.Combine(Rc30Paths.DataRoot,"fix4-bad-project");var goodRoot=Path.Combine(Rc30Paths.DataRoot,"fix4-good-project");Directory.CreateDirectory(badRoot);Directory.CreateDirectory(goodRoot);
         var badConfig=new Arbeitsbereich{ProjectFolder=badRoot,BridgeBin="adc-fix4-isolated-smoke",BridgeToken="synthetic-only"};
         using var bad=new TabSession(badConfig,App.Services);using var good=new TabSession(new Arbeitsbereich{ProjectFolder=goodRoot,BridgeBin="",BridgeToken=""},App.Services);

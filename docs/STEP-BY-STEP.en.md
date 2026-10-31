@@ -15,13 +15,14 @@ This guide covers installation, the first confirmed connection, daily use, recov
 ### 2. Download and verify the installer
 
 1. Sign in to a GitHub account allowed to access this **private repository**. A 404 while signed out is not proof that the release was deleted.
-2. Open the [verified Windows release](https://github.com/FeeZey23/AXON-RC30/releases/tag/rc30-isas-0.2.304).
-3. Under **Assets**, download `ISAS-AXON-RC30-0.2.304-win-x64.msi` and its `.sha256` file. The source ZIP is for development, not the installer.
+2. Open the [verified Windows release](https://github.com/FeeZey23/AXON-RC30/releases/tag/rc30-isas-0.2.306).
+3. Under **Assets**, download `ISAS-AXON-RC30-0.2.306-win-x64.msi` and its `.sha256` file. The source ZIP is for development, not the installer.
 4. Open PowerShell in the download folder and run this check for **this exact release**:
 
 ```powershell
-$msi = '.\ISAS-AXON-RC30-0.2.304-win-x64.msi'
-$expected = '80f419d5f98e0a94a9eb57f5dbbb69e85f710e71487d452cebd7c5d01db8ce36'
+$msi = '.\ISAS-AXON-RC30-0.2.306-win-x64.msi'
+$expected = ((Get-Content -LiteralPath ($msi + '.sha256') -Raw).Trim() -split '\s+')[0]
+if ($expected -notmatch '^[a-fA-F0-9]{64}$') { throw 'Invalid SHA-256 file.' }
 $actual = (Get-FileHash -LiteralPath $msi -Algorithm SHA256).Hash.ToLowerInvariant()
 if ($actual -ne $expected) { throw 'SHA-256 mismatch. Do not install.' }
 'Expected SHA-256 matches.'
@@ -41,6 +42,11 @@ if ($actual -ne $expected) { throw 'SHA-256 mismatch. Do not install.' }
 
 ### 4. Create or select a workspace
 
+In **Settings**, choose **English** or **Deutsch**, connect GitHub through its official device-code page if needed, and view the official repository. GitHub credentials are not stored in AXON settings. Updates are checked separately from installation: **Check repository for update**, then **Update** only if offered; do not update while jobs are running. New workspaces default to read-only; select the required permission profile deliberately. Running local programs grants Windows-user rights, not OS isolation.
+
+If **Connect** is pressed without a project, a dialog offers an existing folder, an HTTPS GitHub repository link or automatic creation. Automatic projects are created under the *actual program directory* at `.axon/projects/0001.axon.dd-MM-yyyy-HH-mm`, with persistent increasing numbers. No administrative elevation or silent alternate folder is used. GitHub clone requires Git; cloning does not execute downloaded code.
+
+
 1. Select an existing AXON tab, or use **＋** to create an independent workspace.
 2. Open **Einstellungen** (Settings). Select the actual Windows folder for the project you want the agent to work on. Do not select `.arena-inbox`, a browser profile or the application's installation folder as a shortcut.
 3. Check the visible tab and selected project path **before every write/build request**.
@@ -57,6 +63,11 @@ if ($actual -ne $expected) { throw 'SHA-256 mismatch. Do not install.' }
 6. Only then authorize the planned write/build work. Do not share passwords or API tokens in chat and do not accept an unverified “connected” claim.
 
 ### 6. Daily use and returning later
+
+New tabs ask whether to remember the login: **Yes** retains the independent profile; **No** uses a real InPrivate profile. Existing profiles are preserved. External links open separate WebView windows; the main view remains on Arena. OAuth popups retain their native opener/profile. Provider restrictions still apply; no login restrictions are bypassed.
+
+The **Publish project as GitHub repository** wizard requires a GitHub login and Git. Enter repository name/description, keep private visibility unless intentionally publishing, review the safe file list, select files explicitly, then confirm the final summary. It creates a new repository only, never overwrites existing ones, and does not modify your project's Git history. Inspect files yourself too: no scanner can guarantee absence of secrets.
+
 
 1. **Projektdateien** = project files; **Protokolle** = logs; **Einstellungen** = settings; **Info** = information. Panels can be docked, resized and detached.
 2. Keep independent work in separate AXON tabs and confirm the active project before each consequential action. Local commands have the signed-in Windows user's permissions, not OS-container isolation.

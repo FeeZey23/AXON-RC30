@@ -38,6 +38,7 @@ public sealed class TabSession : IDisposable
     public string EventLog => Path.Combine(Rc30Paths.SessionFolder(Config.Id),"events.log");
     public CancellationTokenSource Lifetime { get; }=new();
     public bool Disposed { get; private set; }
+    public ArenaNavigation? Navigation { get; private set; }
     public TabSession? LoginSource { get; set; }
     private Task? _browserTask;
     private readonly FileLogger _logger;
@@ -55,14 +56,21 @@ public sealed class TabSession : IDisposable
     {
         var (browser,error)=WebView2Bootstrapper.CreateBrowser(_logger);
         if(browser is null){Log(error??"Browser fehlt","ERROR");return;}
+        if(Config.RememberLogin is null)
+        {
+            Config.RememberLogin=Environment.GetEnvironmentVariable("AXON_RC30_SMOKE")=="1"?true:System.Windows.MessageBox.Show(Application.Current.MainWindow,Product.UiText.Translate("Anmeldung für diesen Tab merken und eingeloggt bleiben?")+"\n\n"+Product.UiText.Translate("Ja: privates Profil bleibt gespeichert. Nein: InPrivate-Sitzung ohne dauerhafte Anmeldung."),"AXON RC30",MessageBoxButton.YesNo,MessageBoxImage.Question)==MessageBoxResult.Yes;
+            MetadataChanged?.Invoke(this);
+        }
+        browser.CreationProperties=new CoreWebView2CreationProperties{IsInPrivateModeEnabled=Config.RememberLogin==false};
         Browser=browser;BrowserCreated?.Invoke(browser);
         var result=await WebView2Bootstrapper.InitializeAsync(browser,_logger,Rc30Paths.ProfileFolder(Config.Id),Environment.GetEnvironmentVariable("AXON_RC30_SMOKE")=="1"?"about:blank":ChatIdentity.Address(Config.ChatAddress)??ChatIdentity.Address(Config.ConnectedChatAddress)??ChatIdentity.Address(Config.LetzteAdresse)??"https://arena.ai/agent",async core=>
         {
+            Navigation=new ArenaNavigation(browser);
             core.SourceChanged+=(_,_)=>ObserveChat(core);
             core.DocumentTitleChanged+=(_,_)=>QueueChatName(core);
             core.NavigationCompleted+=(_,e)=>{if(Disposed)return;ObserveChat(core);if(!e.IsSuccess)Log("Navigation: "+e.WebErrorStatus,"WARN");};
             var source=LoginSource;LoginSource=null;
-            if(source is null||source.Disposed)return;
+            if(source is null||source.Disposed||source.Config.RememberLogin==false||Config.RememberLogin==false)return;
             try{await source.EnsureBrowserAsync();if(!source.Disposed&&source.Browser?.CoreWebView2 is{} parent&&!Disposed){var copied=await ArenaLoginBootstrap.CopyAsync(parent,core);Hint=copied>0?"Arena-Anmeldung einmalig übernommen; Browserprofile bleiben getrennt.":"Keine Arena-Cookies übernommen; ggf. einmal anmelden.";Log("Einmalige Arena-Cookieübernahme: "+copied+" Einträge (keine Werte protokolliert)");}}
             catch(Exception ex){Hint="Anmeldung konnte nicht übernommen werden: "+ex.Message;Log(Hint,"WARN");}
         });
@@ -70,7 +78,7 @@ public sealed class TabSession : IDisposable
         if(!result.Success||browser.CoreWebView2 is null){Log(result.ErrorMessage??"Browser nicht bereit","ERROR");return;}
         var core=browser.CoreWebView2;
         ObserveChat(core);
-        core.NewWindowRequested+=(_,e)=>{if(Disposed)return;e.Handled=true;core.Navigate(e.Uri);};
+
         core.DownloadStarting+=(_,e)=>{if(!Disposed)_downloads.OnDownloadStarting(e);};
         // No generic DOM scrape or unapproved automatic send. All callbacks retain this owner.
         Log("Privates Browserprofil bereit");
@@ -143,5 +151,5 @@ public sealed class TabSession : IDisposable
         if(Disposed)return;message=SecretRedaction.Clean(message);_logger.Write(level,message+(file.Length>0?" · "+file:""));
         Application.Current.Dispatcher.BeginInvoke(()=>{if(Disposed)return;Events.Insert(0,new SessionEvent(DateTimeOffset.Now,message,TabOrder.ShortPath(file),level));while(Events.Count>250)Events.RemoveAt(Events.Count-1);});
     }
-    public void Dispose(){if(Disposed)return;Disposed=true;_metadataRead?.Cancel();_metadataRead?.Dispose();Lifetime.Cancel();Host?.Dispose();Sync?.Dispose();foreach(var card in Cards)card.DisposeCard();Browser?.Dispose();_logger.Dispose();Lifetime.Dispose();}
+    public void Dispose(){if(Disposed)return;Disposed=true;_metadataRead?.Cancel();_metadataRead?.Dispose();Lifetime.Cancel();Host?.Dispose();Sync?.Dispose();foreach(var card in Cards)card.DisposeCard();Navigation?.Dispose();Browser?.Dispose();_logger.Dispose();Lifetime.Dispose();}
 }

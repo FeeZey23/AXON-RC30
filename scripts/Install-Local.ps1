@@ -7,7 +7,8 @@ if(-not $Install){Write-Output 'Dry run only. MSI hash is valid. Use -Install fo
 $testFile=Join-Path (Get-ProjectRoot) '.artifacts\checks\installer-test.json'
 if(-not(Test-Path $testFile)){throw 'A matching installer install/UI/uninstall verification is required before production installation.'}
 $test=Get-Content $testFile -Raw|ConvertFrom-Json
-if(-not $test.Passed -or $test.MsiSha256 -ne $manifest.Sha256 -or $test.SourceDigest -ne $manifest.SourceDigest){throw 'Installer test does not match this MSI'}
+$testedHash=$test.MsiSha256;if($test.IsolatedIdentity -and $test.PayloadVerified){$testedHash=$test.ProductionMsiSha256}
+if(-not $test.Passed -or $testedHash -ne $manifest.Sha256 -or $test.SourceDigest -ne $manifest.SourceDigest -or $manifest.IsolatedIdentity){throw 'Installer test does not match this MSI'}
 $running=@(Get-Process -Name 'AXON.RC30' -ErrorAction SilentlyContinue)
 if($running.Count -and -not $CloseExistingRc30){throw 'Close RC30 first, or explicitly pass -CloseExistingRc30. rc26/rc27 are not stopped.'}
 foreach($p in $running){[void]$p.CloseMainWindow();if(-not $p.WaitForExit(15000)){throw 'RC30 did not close gracefully. No process was killed.'}}

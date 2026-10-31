@@ -1,0 +1,8 @@
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Exact public synthetic redaction/crypto regression vectors; never a blanket test-directory exception"
+condition = "AND"
+paths = ['''tests/ArenaDesktopCompanion\.Core\.Tests/(AgentToolingTests|BridgeUpdateTests)\.cs$''']
+regexes = ['''^(sk-proj-abcdef1234567890abcdef|AIzaSyA1234567890abcdefghijklmnopqrst|xoxb-1234567890-abcdefghijkl|abc123def456ghi789|adc-other123)$''']

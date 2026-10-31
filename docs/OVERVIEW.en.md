@@ -33,7 +33,10 @@ A cloud workspace is not your Windows folder. A visible app window is not proof 
 
 Private runtime state is stored under `%LOCALAPPDATA%\AXON\RC30`. Do not commit settings, profiles, cookies, pairing data, raw logs, chat identifiers or backup archives. The source folder is named `AXON RC30 (by ISAS)`; the project and application are named **AXON RC30**.
 
-### Current verified release
+### Release history and current patch
+
+The figures below belong to the previously verified **0.2.304** release. The new **0.2.306** feature patch is described in the [changelog](../CHANGELOG.md); use its own release validation asset for the new build/installer results.
+
 
 - Technical baseline: **0.2.0-rc30 / Fix4**; MSI version **0.2.304**, Windows x64.
 - Actual Windows full rebuild: **692 Core**, **23 connector**, **19 relay** and **75 native UI** checks passed, with no skipped native gesture.

@@ -1,8 +1,9 @@
-﻿[CmdletBinding()]param([string]$ProductVersion='0.2.304')
+﻿[CmdletBinding()]param([string]$ProductVersion)
 . (Join-Path $PSScriptRoot 'Repository-Common.ps1')
 if($env:OS -ne 'Windows_NT'){throw 'MSI build requires Windows.'}
-$root=Get-ProjectRoot;$checks=Join-Path $root '.artifacts\checks';$validationPath=Join-Path $checks 'validation.json'
+$root=Get-ProjectRoot;if(-not $ProductVersion){[xml]$version=Get-Content (Join-Path $root 'Version.props') -Raw;$ProductVersion=[string]$version.Project.PropertyGroup.ProductVersion};$checks=Join-Path $root '.artifacts\checks';$validationPath=Join-Path $checks 'validation.json'
 if(-not(Test-Path $validationPath)){throw 'Run scripts/Build.ps1 including UI validation first.'}
+[xml]$central=Get-Content (Join-Path $root 'Version.props') -Raw;if($ProductVersion -ne [string]$central.Project.PropertyGroup.ProductVersion){throw 'Installer version must match central product version'}
 $v=Get-Content $validationPath -Raw | ConvertFrom-Json
 if(-not $v.ReleaseGate -or $v.SourceDigest -ne (Get-RepositoryDigest $root)){throw 'Full matching Windows validation is missing or source changed.'}
 $publish=Join-Path $root '.artifacts\runtime-win-x64';$out=Join-Path $root 'releases';New-Item -ItemType Directory -Path $publish,$out -Force | Out-Null
@@ -11,6 +12,8 @@ try{
  Invoke-LoggedTool dotnet @('restore','src/ArenaDesktopCompanion','-r','win-x64') (Join-Path $checks 'restore-self-contained.log')
  Invoke-LoggedTool dotnet @('clean','src/ArenaDesktopCompanion','-c','Release','-r','win-x64','--nologo') (Join-Path $checks 'clean-self-contained.log')
  Invoke-LoggedTool dotnet @('publish','src/ArenaDesktopCompanion','-c','Release','-r','win-x64','--self-contained','true','-p:PublishSingleFile=false','-p:TreatWarningsAsErrors=true','-o',$publish) (Join-Path $checks 'publish-self-contained.log')
+ & (Join-Path $root 'scripts\Prepare-GitHub.ps1') -Destination (Join-Path $publish 'Tools\GitHub')
+ & (Join-Path $root 'scripts\Prepare-Gitleaks.ps1') -Destination (Join-Path $publish 'Tools\Gitleaks')
  $priorRoll=$env:DOTNET_ROLL_FORWARD;$env:DOTNET_ROLL_FORWARD='Major'
  try{Invoke-LoggedTool dotnet @('tool','restore') (Join-Path $checks 'wix-restore.log')}finally{$env:DOTNET_ROLL_FORWARD=$priorRoll}
  $ns='http://wixtoolset.org/schemas/v4/wxs';$xml=New-Object Xml.XmlDocument;$wix=$xml.CreateElement('Wix',$ns);[void]$xml.AppendChild($wix)

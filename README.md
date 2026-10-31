@@ -15,6 +15,9 @@ Getrennte Arena-Chats. Klar zugeordnete Windows-Projekte. Dauerhafte Arbeitsbere
 
 </div>
 
+[Download / Releases](https://github.com/FeeZey23/AXON-RC30/releases) · [Patchlog](CHANGELOG.md)  
+MSI/EXE unsigned / unsigniert · GitHub access required / GitHub-Zugriff erforderlich
+
 **Choose a section to expand · Zum Aufklappen einen Bereich anklicken**
 
 <details>
@@ -51,7 +54,10 @@ A cloud workspace is not your Windows folder. A visible app window is not proof 
 
 Private runtime state is stored under `%LOCALAPPDATA%\AXON\RC30`. Do not commit settings, profiles, cookies, pairing data, raw logs, chat identifiers or backup archives. The source folder is named `AXON RC30 (by ISAS)`; the project and application are named **AXON RC30**.
 
-### Current verified release
+### Release history and current patch
+
+The figures below belong to the previously verified **0.2.304** release. The new **0.2.306** feature patch is described in the [changelog](./CHANGELOG.md); use its own release validation asset for the new build/installer results.
+
 
 - Technical baseline: **0.2.0-rc30 / Fix4**; MSI version **0.2.304**, Windows x64.
 - Actual Windows full rebuild: **692 Core**, **23 connector**, **19 relay** and **75 native UI** checks passed, with no skipped native gesture.
@@ -88,13 +94,14 @@ This guide covers installation, the first confirmed connection, daily use, recov
 ### 2. Download and verify the installer
 
 1. Sign in to a GitHub account allowed to access this **private repository**. A 404 while signed out is not proof that the release was deleted.
-2. Open the [verified Windows release](https://github.com/FeeZey23/AXON-RC30/releases/tag/rc30-isas-0.2.304).
-3. Under **Assets**, download `ISAS-AXON-RC30-0.2.304-win-x64.msi` and its `.sha256` file. The source ZIP is for development, not the installer.
+2. Open the [verified Windows release](https://github.com/FeeZey23/AXON-RC30/releases/tag/rc30-isas-0.2.306).
+3. Under **Assets**, download `ISAS-AXON-RC30-0.2.306-win-x64.msi` and its `.sha256` file. The source ZIP is for development, not the installer.
 4. Open PowerShell in the download folder and run this check for **this exact release**:
 
 ```powershell
-$msi = '.\ISAS-AXON-RC30-0.2.304-win-x64.msi'
-$expected = '80f419d5f98e0a94a9eb57f5dbbb69e85f710e71487d452cebd7c5d01db8ce36'
+$msi = '.\ISAS-AXON-RC30-0.2.306-win-x64.msi'
+$expected = ((Get-Content -LiteralPath ($msi + '.sha256') -Raw).Trim() -split '\s+')[0]
+if ($expected -notmatch '^[a-fA-F0-9]{64}$') { throw 'Invalid SHA-256 file.' }
 $actual = (Get-FileHash -LiteralPath $msi -Algorithm SHA256).Hash.ToLowerInvariant()
 if ($actual -ne $expected) { throw 'SHA-256 mismatch. Do not install.' }
 'Expected SHA-256 matches.'
@@ -114,6 +121,11 @@ if ($actual -ne $expected) { throw 'SHA-256 mismatch. Do not install.' }
 
 ### 4. Create or select a workspace
 
+In **Settings**, choose **English** or **Deutsch**, connect GitHub through its official device-code page if needed, and view the official repository. GitHub credentials are not stored in AXON settings. Updates are checked separately from installation: **Check repository for update**, then **Update** only if offered; do not update while jobs are running. New workspaces default to read-only; select the required permission profile deliberately. Running local programs grants Windows-user rights, not OS isolation.
+
+If **Connect** is pressed without a project, a dialog offers an existing folder, an HTTPS GitHub repository link or automatic creation. Automatic projects are created under the *actual program directory* at `.axon/projects/0001.axon.dd-MM-yyyy-HH-mm`, with persistent increasing numbers. No administrative elevation or silent alternate folder is used. GitHub clone requires Git; cloning does not execute downloaded code.
+
+
 1. Select an existing AXON tab, or use **＋** to create an independent workspace.
 2. Open **Einstellungen** (Settings). Select the actual Windows folder for the project you want the agent to work on. Do not select `.arena-inbox`, a browser profile or the application's installation folder as a shortcut.
 3. Check the visible tab and selected project path **before every write/build request**.
@@ -130,6 +142,11 @@ if ($actual -ne $expected) { throw 'SHA-256 mismatch. Do not install.' }
 6. Only then authorize the planned write/build work. Do not share passwords or API tokens in chat and do not accept an unverified “connected” claim.
 
 ### 6. Daily use and returning later
+
+New tabs ask whether to remember the login: **Yes** retains the independent profile; **No** uses a real InPrivate profile. Existing profiles are preserved. External links open separate WebView windows; the main view remains on Arena. OAuth popups retain their native opener/profile. Provider restrictions still apply; no login restrictions are bypassed.
+
+The **Publish project as GitHub repository** wizard requires a GitHub login and Git. Enter repository name/description, keep private visibility unless intentionally publishing, review the safe file list, select files explicitly, then confirm the final summary. It creates a new repository only, never overwrites existing ones, and does not modify your project's Git history. Inspect files yourself too: no scanner can guarantee absence of secrets.
+
 
 1. **Projektdateien** = project files; **Protokolle** = logs; **Einstellungen** = settings; **Info** = information. Panels can be docked, resized and detached.
 2. Keep independent work in separate AXON tabs and confirm the active project before each consequential action. Local commands have the signed-in Windows user's permissions, not OS-container isolation.
@@ -220,7 +237,10 @@ Clouddateien sind nicht automatisch Windows-Dateien. Ein sichtbares Fenster best
 
 Private Laufzeitdaten liegen unter `%LOCALAPPDATA%\AXON\RC30`. Settings, Profile, Cookies, Paarungsdaten, Rohlogs, Chat-IDs und Sicherungsarchive gehören nicht ins Repository. Der Quellordner heißt **`AXON RC30 (by ISAS)`**, das Projekt und die Anwendung heißen **AXON RC30**.
 
-### Tatsächlich geprüfter Stand
+### Releasehistorie und aktueller Patch
+
+Die folgenden Zahlen gehören zum zuvor geprüften Release **0.2.304**. Der neue Funktionspatch **0.2.306** steht im [Patchlog](./CHANGELOG.md); seine Build-/Installernachweise werden gesondert beim zugehörigen Release bereitgestellt.
+
 
 - Technische Basis: **0.2.0-rc30 / Fix4**, MSI **0.2.304**, Windows x64.
 - Erzwungener Windows-Neubau: **692 Core-, 23 Connector-, 19 Relay- und 75 native UI-Prüfpunkte** bestanden, ohne übersprungene native Geste.
@@ -232,9 +252,9 @@ Private Laufzeitdaten liegen unter `%LOCALAPPDATA%\AXON\RC30`. Settings, Profile
 
 ### Weiterführende Seiten
 
-- [Vollständige deutsche Projektübersicht mit Modulkatalog](PROJECT.OVERVIEW.md)
-- [Schritt.für.Schritt.Anleitung](docs/STEP-BY-STEP.de.md)
-- [Sicherheitsgrenzen](SECURITY.md) · [Prüfnachweise](docs/VALIDATION.md)
+- [Vollständige deutsche Projektübersicht mit Modulkatalog](./PROJECT.OVERVIEW.md)
+- [Schritt.für.Schritt.Anleitung](./docs/STEP-BY-STEP.de.md)
+- [Sicherheitsgrenzen](./SECURITY.md) · [Prüfnachweise](./docs/VALIDATION.md)
 - [Installer und Quellpaket](https://github.com/FeeZey23/AXON-RC30/releases/tag/rc30-isas-0.2.304)
 
 Lizenz: MIT mit erhaltenem ursprünglichem Copyright und Drittanbieterhinweisen. Historische technische Bezeichner sind Kompatibilitätsdetails, kein anderer Produktname.
@@ -257,13 +277,14 @@ Diese Anleitung führt durch Installation, erste bestätigte Verbindung, Alltag,
 ### 2. Installer herunterladen und prüfen
 
 1. Bei GitHub mit einem für dieses **private Repository** berechtigten Konto anmelden. Ein 404 ohne Anmeldung bedeutet nicht, dass das Release gelöscht wurde.
-2. Das [geprüfte Windows-Release](https://github.com/FeeZey23/AXON-RC30/releases/tag/rc30-isas-0.2.304) öffnen.
-3. Unter **Assets** `ISAS-AXON-RC30-0.2.304-win-x64.msi` und die zugehörige `.sha256`-Datei herunterladen. Das Source-ZIP enthält Quellen und ist nicht der Installer.
+2. Das [geprüfte Windows-Release](https://github.com/FeeZey23/AXON-RC30/releases/tag/rc30-isas-0.2.306) öffnen.
+3. Unter **Assets** `ISAS-AXON-RC30-0.2.306-win-x64.msi` und die zugehörige `.sha256`-Datei herunterladen. Das Source-ZIP enthält Quellen und ist nicht der Installer.
 4. PowerShell im Downloadordner öffnen und für **genau dieses Release** prüfen:
 
 ```powershell
-$msi = '.\ISAS-AXON-RC30-0.2.304-win-x64.msi'
-$expected = '80f419d5f98e0a94a9eb57f5dbbb69e85f710e71487d452cebd7c5d01db8ce36'
+$msi = '.\ISAS-AXON-RC30-0.2.306-win-x64.msi'
+$expected = ((Get-Content -LiteralPath ($msi + '.sha256') -Raw).Trim() -split '\s+')[0]
+if ($expected -notmatch '^[a-fA-F0-9]{64}$') { throw 'Invalid SHA-256 file.' }
 $actual = (Get-FileHash -LiteralPath $msi -Algorithm SHA256).Hash.ToLowerInvariant()
 if ($actual -ne $expected) { throw 'SHA-256 stimmt nicht. Nicht installieren.' }
 'Erwarteter SHA-256 stimmt.'
@@ -283,6 +304,11 @@ if ($actual -ne $expected) { throw 'SHA-256 stimmt nicht. Nicht installieren.' }
 
 ### 4. Arbeitsbereich anlegen oder auswählen
 
+In **Einstellungen** die Sprache **Deutsch** oder **English** wählen, bei Bedarf GitHub über die offizielle Gerätecode-Seite verbinden und den offiziellen Repository-Link öffnen. Zugangsdaten werden nicht in AXON-Settings gespeichert. Updateprüfung und Installation sind getrennt: **Update im Repository prüfen**, danach bei angebotenem Update **Update** drücken; nicht während laufender Jobs aktualisieren. Neue Arbeitsbereiche starten nur lesend; das benötigte Berechtigungsprofil bewusst wählen. Lokale Programme haben Windows-Benutzerrechte, keine OS-Isolation.
+
+**Connect** ohne Projekt öffnet einen Dialog: vorhandener Ordner, HTTPS-GitHub-Link oder automatisch erstellen. Automatische Projekte entstehen im *tatsächlichen Programmverzeichnis* unter `.axon/projects/0001.axon.dd-MM-yyyy-HH-mm` mit dauerhaft aufsteigender Nummer. Keine automatische Adminfreigabe und kein stiller Ausweichordner. GitHub-Klonen benötigt Git und führt heruntergeladenen Code nicht aus.
+
+
 1. Einen vorhandenen AXON-Tab auswählen oder über **＋** einen unabhängigen Arbeitsbereich anlegen.
 2. **Einstellungen** öffnen und den tatsächlichen Windows-Ordner des gewünschten Projekts auswählen. Nicht `.arena-inbox`, ein Browserprofil oder den Installationsordner als Abkürzung wählen.
 3. **Vor jedem Schreib-/Buildauftrag** sichtbaren Tab und Projektpfad prüfen.
@@ -299,6 +325,11 @@ if ($actual -ne $expected) { throw 'SHA-256 stimmt nicht. Nicht installieren.' }
 6. Erst danach geplante Schreib-/Buildaktionen freigeben. Keine Passwörter oder API-Tokens im Chat teilen; unbelegtes „verbunden“ nicht als Nachweis akzeptieren.
 
 ### 6. Alltag und spätere Wiederaufnahme
+
+Neue Tabs fragen, ob die Anmeldung gemerkt werden soll: **Ja** behält das unabhängige Profil, **Nein** verwendet ein echtes InPrivate-Profil. Bestehende Profile bleiben erhalten. Externe Links öffnen weitere WebView-Fenster; das Hauptfenster bleibt bei Arena. OAuth-Popups behalten nativen Opener und Profil. Anbieterrestriktionen gelten weiterhin; keine Loginbeschränkungen werden umgangen.
+
+Der Assistent **Projekt als GitHub-Repository veröffentlichen** benötigt GitHub-Anmeldung und Git. Name/Beschreibung eingeben, privaten Standard bewusst beibehalten oder ändern, Dateiliste prüfen, Dateien ausdrücklich auswählen und die Abschlussübersicht bestätigen. Er erstellt nur neue Repositories, überschreibt keine vorhandenen und verändert nicht die Git-Historie deines Projektordners. Dateien zusätzlich selbst prüfen: Kein Scanner garantiert vollständige Secretfreiheit.
+
 
 1. **Projektdateien**, **Protokolle**, **Einstellungen** und **Info** öffnen die jeweiligen Panels. Diese lassen sich andocken, vergrößern und auskoppeln.
 2. Unabhängige Arbeiten in getrennten AXON-Tabs halten und vor folgenreichen Aktionen das Projekt bestätigen. Lokale Befehle nutzen Windows-Benutzerrechte, keine Betriebssystem-Prozessisolation.
@@ -358,3 +389,5 @@ Das Release bleibt unsigniert; es gibt keine vollständige VM-/Upgrade-/Mixed-DP
 ---
 
 AXON RC30 · by ISAS · Technical basis / Technische Basis: **0.2.0-rc30 / Fix4** · [MIT](LICENSE) · [Third-party notices](THIRD-PARTY-NOTICES.md)
+
+[Technische Projektseite](PROJECT.OVERVIEW.md)

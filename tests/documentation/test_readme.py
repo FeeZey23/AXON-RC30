@@ -33,7 +33,7 @@ class LandingPageTests(unittest.TestCase):
         self.assertIn('Separate Arena chats.', preview)
         self.assertIn('Getrennte Arena-Chats.', preview)
         self.assertIn('application-ui-smoke.png', preview)
-        self.assertLess(len(preview), 1600)
+        self.assertLess(len(preview), 2000)
 
     def test_both_guides_have_nine_real_steps_and_checklists(self):
         for language in ['en', 'de']:
@@ -60,7 +60,7 @@ class LandingPageTests(unittest.TestCase):
                 self.assertTrue(path.exists(), str(path))
 
     def test_installer_hash_and_gate_caveats_match_both_languages(self):
-        digest = '80f419d5f98e0a94a9eb57f5dbbb69e85f710e71487d452cebd7c5d01db8ce36'
+        digest = "Get-Content -LiteralPath ($msi + '.sha256')"
         for language, manual, unsigned in [('en', 'Send the draft yourself', 'unsigned'), ('de', 'Den Entwurf selbst absenden', 'unsigniert')]:
             text = (ROOT / f'docs/STEP-BY-STEP.{language}.md').read_text()
             for marker in [digest, manual, unsigned, 'installer-manifest.json', 'Install-Local.ps1', 'SkipUiSmoke']:

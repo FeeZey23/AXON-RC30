@@ -6,8 +6,8 @@ namespace ArenaDesktopCompanion;
 public partial class MainWindow
 {
     [StructLayout(LayoutKind.Sequential)]private struct NativePoint{public int X,Y;}
-    [DllImport("user32.dll")]private static extern bool GetCursorPos(out NativePoint point);
-    [DllImport("user32.dll")]private static extern bool SetCursorPos(int x,int y);
+    [DllImport("user32.dll",EntryPoint="GetPhysicalCursorPos")]private static extern bool GetCursorPos(out NativePoint point);
+    [DllImport("user32.dll",EntryPoint="SetPhysicalCursorPos")]private static extern bool SetCursorPos(int x,int y);
     [DllImport("user32.dll")]private static extern bool SetForegroundWindow(IntPtr hwnd);
     [DllImport("user32.dll")]private static extern bool ShowWindow(IntPtr hwnd,int command);
     [DllImport("user32.dll")]private static extern bool IsWindowVisible(IntPtr hwnd);
@@ -21,12 +21,12 @@ public partial class MainWindow
     {
         if(Environment.GetEnvironmentVariable("AXON_RC30_SMOKE")!="1")throw new InvalidOperationException("Nur isolierter RC30-Prüfstand erlaubt.");
         Activate(owner);UpdateLayout();var cards=Panels.Children.OfType<DockCard>().Where(c=>!c.Layout.Detached).Take(2).ToArray();var target=cards[0];var source=cards[1];
-        foreach(var c in cards){var thumb=FindVisualChildren<System.Windows.Controls.Primitives.Thumb>(c).Single();thumb.RaiseEvent(new System.Windows.Controls.Primitives.DragDeltaEventArgs(0,-1200){RoutedEvent=System.Windows.Controls.Primitives.Thumb.DragDeltaEvent});}
+        foreach(var c in cards){var thumb=FindVisualChildren<System.Windows.Controls.Primitives.Thumb>(c).Single(t=>t.Name=="PanelResizeGrip");thumb.RaiseEvent(new System.Windows.Controls.Primitives.DragDeltaEventArgs(0,-1200){RoutedEvent=System.Windows.Controls.Primitives.Thumb.DragDeltaEvent});}
         FindVisualChildren<System.Windows.Controls.ScrollViewer>(this).Single(s=>ReferenceEquals(s.Content,Panels)).ScrollToTop();UpdateLayout();await System.Windows.Threading.Dispatcher.Yield(System.Windows.Threading.DispatcherPriority.ApplicationIdle);await Task.Delay(350);
         checks.Add("Hardware-Monitorzahl im Windows-Prüfstand: "+GetSystemMetrics(80)+"; weitere Topologien und 100/125/150/200 Prozent separat synthetisch geprüft");
         var a=source.PointToScreen(new Point(source.ActualWidth/2,20));var b=target.PointToScreen(new Point(target.ActualWidth/2,20));
         var from=new NativePoint{X=(int)a.X,Y=(int)a.Y};var to=new NativePoint{X=(int)b.X,Y=(int)b.Y};var handle=new WindowInteropHelper(this).Handle;
-        GetCursorPos(out var original);var priorTopmost=Topmost;Topmost=true;WindowState=WindowState.Normal;Show();ShowWindow(handle,9);ShowWindow(handle,5);Activate();SetForegroundWindow(handle);UpdateLayout();await Task.Delay(250);
+        GetCursorPos(out var original);var priorTopmost=Topmost;Topmost=true;WindowState=WindowState.Normal;var largest=MonitorPlacement.WorkAreas().OrderByDescending(m=>m.Physical.Width*m.Physical.Height).First();MonitorPlacement.MoveForSmoke(this,largest.Physical);Show();ShowWindow(handle,9);ShowWindow(handle,5);WindowState=WindowState.Maximized;Activate();SetForegroundWindow(handle);UpdateLayout();await Task.Delay(250);
         a=source.PointToScreen(new Point(source.ActualWidth/2,20));b=target.PointToScreen(new Point(target.ActualWidth/2,20));from=new NativePoint{X=(int)a.X,Y=(int)a.Y};to=new NativePoint{X=(int)b.X,Y=(int)b.Y};
         if(GetForegroundWindow()!=handle&&(GetAsyncKeyState(1)&0x8000)==0)
         {
@@ -46,10 +46,16 @@ public partial class MainWindow
         target.AddHandler(DragDrop.PreviewDropEvent,observeDrop,true);
         try
         {
+            // SetCursorPos only queues the move. Let WPF update its hit target before injecting Down.
+            SetCursorPos(from.X,from.Y);await Task.Delay(200);
+            var hit=InputHitTest(PointFromScreen(new Point(from.X,from.Y))) as DependencyObject;
+            while(hit is not null&&!ReferenceEquals(hit,source))hit=System.Windows.Media.VisualTreeHelper.GetParent(hit);
+            if(hit is null)throw new InvalidOperationException("Native source header is clipped/covered; no mouse press injected.");
             await Task.Run(()=>
             {
                 if(GetForegroundWindow()!=handle)throw new InvalidOperationException("Prüffenster hat Fokus verloren; keine Maus-Geste gestartet.");
-                SetCursorPos(from.X,from.Y);mouse_event(2,0,0,0,UIntPtr.Zero);
+                SetCursorPos(from.X,from.Y);Thread.Sleep(200);GetCursorPos(out var actualStart);if(actualStart.X!=from.X||actualStart.Y!=from.Y)throw new InvalidOperationException($"Native physical cursor did not settle: expected {from.X},{from.Y}; actual {actualStart.X},{actualStart.Y}; no mouse press injected.");
+                mouse_event(2,0,0,0,UIntPtr.Zero);
                 try{Thread.Sleep(150);for(var i=1;i<=24;i++){SetCursorPos(from.X+(to.X-from.X)*i/24,from.Y+(to.Y-from.Y)*i/24);Thread.Sleep(25);}Thread.Sleep(100);}
                 finally{mouse_event(4,0,0,0,UIntPtr.Zero);}
             });

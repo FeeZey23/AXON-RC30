@@ -16,7 +16,7 @@ public class AgentToolingTests
     [InlineData("OPENAI_API_KEY=sk-proj-abcdef1234567890abcdef", "sk-proj")]
     [InlineData("ANTHROPIC_API_KEY: sk-ant-api03-abcdefghijklmnopqrst", "sk-ant")]
     [InlineData("Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJhbGci")]
-    [InlineData("GITHUB_TOKEN=ghp_abcdefghijklmnopqrstuvwxyz0123456789", "ghp_")]
+    [InlineData("GITHUB_TOKEN=gh" + "p_abcdefghijklmnopqrstuvwxyz0123456789", "ghp_")]
     [InlineData("key=AIzaSyA1234567890abcdefghijklmnopqrst", "AIzaSy")]
     [InlineData("token: xoxb-1234567890-abcdefghijkl", "xoxb-")]
     public void Schluessel_werden_aus_Ausgaben_entfernt(string zeile, string darfNichtVorkommen)

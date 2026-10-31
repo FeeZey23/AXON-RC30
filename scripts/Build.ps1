@@ -4,6 +4,8 @@ if($env:OS -ne 'Windows_NT'){throw 'This WPF validation must run on Windows.'}
 $root=Get-ProjectRoot;$checks=Join-Path $root '.artifacts\checks';$runtime=Join-Path $root '.artifacts\runtime-framework-dependent'
 New-Item -ItemType Directory -Path $checks,$runtime -Force | Out-Null
 & (Join-Path $PSScriptRoot 'Test-Repository.ps1')
+& (Join-Path $root 'scripts\Test-Secrets.ps1')
+Invoke-LoggedTool node @((Join-Path $root 'scripts\Check-Documentation.mjs')) (Join-Path $checks 'documentation.log')
 $before=Get-RepositoryDigest $root
 Push-Location $root
 try{
@@ -17,6 +19,7 @@ try{
  Invoke-LoggedTool dotnet @('restore','src/ArenaDesktopCompanion','-r','win-x64') (Join-Path $checks 'restore-framework-dependent.log')
  Invoke-LoggedTool dotnet @('clean','src/ArenaDesktopCompanion','-c','Release','-r','win-x64','--nologo') (Join-Path $checks 'clean-framework-dependent.log')
  Invoke-LoggedTool dotnet @('publish','src/ArenaDesktopCompanion','-c','Release','-r','win-x64','--self-contained','false','-p:TreatWarningsAsErrors=true','-o',$runtime) (Join-Path $checks 'publish-framework-dependent.log')
+ & (Join-Path $root 'scripts\Prepare-GitHub.ps1') -Destination (Join-Path $runtime 'Tools\GitHub')
  $uiPassed=$false;$uiCount=0;$skips=0
  if(-not $SkipUiSmoke){
   $env:AXON_RC30_SMOKE='1';$env:AXON_RC30_SMOKE_OUTPUT=Join-Path $checks 'ui.json'

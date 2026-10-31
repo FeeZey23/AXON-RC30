@@ -12,7 +12,7 @@ Diese Anleitung beschreibt den reproduzierbaren Ablauf. Der Quellordner wurde am
 |---|---|---|
 | Windows x64 | Anwendung, WPF, Installer | Andere Architekturen sind nicht als freigegeben behauptet. |
 | Visual Studio mit .NET-Desktopentwicklung | IDE / WPF-Designer | Kompatible Insiders-/Preview-Ausgabe möglich. |
-| .NET SDK mit .NET-8-Unterstützung | Restore, Build und Tests | `global.json` erlaubt geeignete neuere Hauptversionen. |
+| .NET SDK mit .NET-8-Unterstützung | Restore, Build und Tests | `global.json` pinnt für reproduzierbare Builds ein stabiles SDK; keine automatische Preview-SDK-Auswahl. |
 | Microsoft Edge WebView2 Runtime | Browser im Produkt / UI-Test | Evergreen-Runtime über den offiziellen Microsoft-Weg beziehen. |
 | Node.js 20 oder kompatibel | Connectorintegration / Cloud-Client | Kein zusätzliches npm-Paket für den eingebetteten Client nötig. |
 | PowerShell 5.1 oder neuer | Gepflegte Windows-Skripte | Skripte sind mit UTF-8-BOM für Windows PowerShell gespeichert. |
@@ -60,9 +60,9 @@ Nur nach isolierter Abnahme und Hashprüfung. rc26/rc27 unverändert weiterlaufe
 
 ```powershell
 # Prüfen ohne Installation:
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts\Install-Local.ps1 -Msi releases\ISAS-AXON-RC30-0.2.304-win-x64.msi
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\Install-Local.ps1 -Msi releases\ISAS-AXON-RC30-0.2.306-win-x64.msi
 # Erst dieser Aufruf installiert:
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts\Install-Local.ps1 -Msi releases\ISAS-AXON-RC30-0.2.304-win-x64.msi -Install -CloseExistingRc30
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\Install-Local.ps1 -Msi releases\ISAS-AXON-RC30-0.2.306-win-x64.msi -Install -CloseExistingRc30
 ```
 
 Ein `ExecutionPolicy Bypass` gilt nur für diesen expliziten Skriptprozess und ist kein Abschalten von Defender/SmartScreen. Vorher Quelle prüfen. Unsichere oder unerwartet veränderte Pakete nicht ausführen.
