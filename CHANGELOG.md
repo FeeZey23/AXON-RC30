@@ -1,8 +1,8 @@
 # AXON RC30 — Patchlog
 
-## 0.2.306 — Funktionsausbau
+## 0.2.307 — Funktionsausbau
 
-0.2.305 war ein nur intern installierter, nicht veröffentlichter Abnahmestand. Der echte private GitHub-Klontest deckte dessen Windows-`NUL`-Pfadinkompatibilität auf. 0.2.306 verwendet eine reguläre mitgelieferte Git-Policydatei und wird als echtes Versionsupgrade ausgeliefert.
+0.2.305 war ein nur intern installierter, nicht veröffentlichter Abnahmestand. Der echte private GitHub-Klontest deckte dessen Windows-`NUL`-Pfadinkompatibilität auf. 0.2.306 ergänzte die reguläre Git-Policydatei, blieb aber unveröffentlichter Abnahmestand: GitHub normalisiert Upload-Leerzeichen zu Punkten. 0.2.307 bindet deshalb den festen Remote-Assetnamen `AXON.RC30.Installer.exe` an den lokalen Namen `AXON RC30 Installer.exe`, prüft weiterhin beide SHA256-Gegenstellen und benennt nur die erfolgreich geprüfte Downloadkopie lokal um.
 
 ### Anwendung und Projekte
 - Gespeicherte Sprachauswahl Deutsch/Englisch für Anwendungsbedienung und neue Dialoge. Diagnose-/Protokoll-, Betriebssystem- und Werkzeugmeldungen behalten ggf. ihre Ursprungssprache. Nutzerdaten wie selbst gewählte Tabnamen werden nicht übersetzt.

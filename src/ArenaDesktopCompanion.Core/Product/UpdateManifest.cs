@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 namespace ArenaDesktopCompanion.Core.Product;
 public sealed record UpdateManifest(string Version,string File,string Sha256)
 {
+    public static string GitHubBootstrapperAsset(string localName){if(localName!="AXON RC30 Installer.exe")throw new InvalidDataException("Unexpected local bootstrapper name.");return "AXON.RC30.Installer.exe";}
     public static void ValidateBootstrapper(string file,string sha256,string assetDigest)
     {if(file!="AXON RC30 Installer.exe"||!Regex.IsMatch(sha256,"^[a-f0-9]{64}$")||assetDigest!="sha256:"+sha256)throw new InvalidDataException("Unsafe bootstrapper or mismatched GitHub digest.");}
     public static UpdateManifest Parse(string json,string assetDigest)

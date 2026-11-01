@@ -15,12 +15,12 @@ Diese Anleitung führt durch Installation, erste bestätigte Verbindung, Alltag,
 ### 2. Installer herunterladen und prüfen
 
 1. Bei GitHub mit einem für dieses **private Repository** berechtigten Konto anmelden. Ein 404 ohne Anmeldung bedeutet nicht, dass das Release gelöscht wurde.
-2. Das [geprüfte Windows-Release](https://github.com/FeeZey23/AXON-RC30/releases/tag/rc30-isas-0.2.306) öffnen.
-3. Unter **Assets** `ISAS-AXON-RC30-0.2.306-win-x64.msi` und die zugehörige `.sha256`-Datei herunterladen. Das Source-ZIP enthält Quellen und ist nicht der Installer.
+2. Das [geprüfte Windows-Release](https://github.com/FeeZey23/AXON-RC30/releases/tag/rc30-isas-0.2.307) öffnen.
+3. Unter **Assets** `ISAS-AXON-RC30-0.2.307-win-x64.msi` und die zugehörige `.sha256`-Datei herunterladen. Das Source-ZIP enthält Quellen und ist nicht der Installer.
 4. PowerShell im Downloadordner öffnen und für **genau dieses Release** prüfen:
 
 ```powershell
-$msi = '.\ISAS-AXON-RC30-0.2.306-win-x64.msi'
+$msi = '.\ISAS-AXON-RC30-0.2.307-win-x64.msi'
 $expected = ((Get-Content -LiteralPath ($msi + '.sha256') -Raw).Trim() -split '\s+')[0]
 if ($expected -notmatch '^[a-fA-F0-9]{64}$') { throw 'Invalid SHA-256 file.' }
 $actual = (Get-FileHash -LiteralPath $msi -Algorithm SHA256).Hash.ToLowerInvariant()

@@ -17,6 +17,7 @@ try{
  $payloadVerified=$true;$publish=Join-Path $root '.artifacts\runtime-win-x64'
  foreach($file in (Get-ChildItem $publish -Recurse -File|Where-Object {$_.Extension -ne '.pdb'})){$relative=$file.FullName.Substring($publish.Length+1);$installedFile=Join-Path $app $relative;if(-not(Test-Path $installedFile) -or (Get-FileHash $installedFile).Hash -ne (Get-FileHash $file.FullName).Hash){throw 'Installed payload differs from production publish'}}
  $exe=Join-Path $app 'AXON.RC30.exe';if(-not(Test-Path $exe)){throw 'Test executable not installed'}
+ & (Join-Path $PSScriptRoot 'Wait-InputIdle.ps1')
  $env:AXON_RC30_SMOKE='1';$env:AXON_RC30_SMOKE_OUTPUT=Join-Path $checks 'installer-ui.json';Remove-Item $env:AXON_RC30_SMOKE_OUTPUT -ErrorAction SilentlyContinue
  try{
   $uiProcess=Start-Process $exe -WorkingDirectory $app -PassThru

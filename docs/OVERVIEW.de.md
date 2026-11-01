@@ -35,7 +35,7 @@ Private Laufzeitdaten liegen unter `%LOCALAPPDATA%\AXON\RC30`. Settings, Profile
 
 ### Releasehistorie und aktueller Patch
 
-Die folgenden Zahlen gehören zum zuvor geprüften Release **0.2.304**. Der neue Funktionspatch **0.2.306** steht im [Patchlog](../CHANGELOG.md); seine Build-/Installernachweise werden gesondert beim zugehörigen Release bereitgestellt.
+Die folgenden Zahlen gehören zum zuvor geprüften Release **0.2.304**. Der neue Funktionspatch **0.2.307** steht im [Patchlog](../CHANGELOG.md); seine Build-/Installernachweise werden gesondert beim zugehörigen Release bereitgestellt.
 
 
 - Technische Basis: **0.2.0-rc30 / Fix4**, MSI **0.2.304**, Windows x64.

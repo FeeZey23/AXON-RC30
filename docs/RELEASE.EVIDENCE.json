@@ -25,7 +25,7 @@
   "RelayProductionStabilityClaimed": false,
   "GitHubPublished": true,
   "DocumentationUpdatedAfterVerifiedBuild": true,
-  "Note": "Historischer Abnahmenachweis für Release 0.2.304, nicht die Freigabe des neuen Funktionsausbaus 0.2.306. Die neue Version verändert Produktcode und verwendet einen eigenen SourceDigest sowie neue Windows-/Installerabnahmen; deren bereinigte Ergebnisse werden als release-validation.json im zugehörigen Release veröffentlicht. Keine VM-/Signatur-/Relay-SLA behauptet.",
+  "Note": "Historischer Abnahmenachweis für Release 0.2.304, nicht die Freigabe des neuen Funktionsausbaus 0.2.307. Die neue Version verändert Produktcode und verwendet einen eigenen SourceDigest sowie neue Windows-/Installerabnahmen; deren bereinigte Ergebnisse werden als release-validation.json im zugehörigen Release veröffentlicht. Keine VM-/Signatur-/Relay-SLA behauptet.",
   "GitHubPrivate": true,
   "GitHubRepositoryUrl": "https://github.com/FeeZey23/AXON-RC30",
   "InitialPublishedCommit": "1674520d9eb89807b4d2cc5fc83d9cc83fb318b9",
@@ -38,6 +38,6 @@
   "ReadmeCollapsibleSections": 4,
   "VisualStudioEntryPoint": "AXON RC30.sln",
   "EvidenceAppliesToRelease": "0.2.304",
-  "CurrentDevelopmentRelease": "0.2.306",
+  "CurrentDevelopmentRelease": "0.2.307",
   "ProductSourcesChangedSinceBaseline": true
 }

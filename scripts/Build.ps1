@@ -22,6 +22,7 @@ try{
  & (Join-Path $root 'scripts\Prepare-GitHub.ps1') -Destination (Join-Path $runtime 'Tools\GitHub')
  $uiPassed=$false;$uiCount=0;$skips=0
  if(-not $SkipUiSmoke){
+ & (Join-Path $PSScriptRoot 'Wait-InputIdle.ps1')
   $env:AXON_RC30_SMOKE='1';$env:AXON_RC30_SMOKE_OUTPUT=Join-Path $checks 'ui.json'
   Remove-Item -LiteralPath $env:AXON_RC30_SMOKE_OUTPUT -ErrorAction SilentlyContinue
   try{

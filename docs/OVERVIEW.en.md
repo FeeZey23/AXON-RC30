@@ -35,7 +35,7 @@ Private runtime state is stored under `%LOCALAPPDATA%\AXON\RC30`. Do not commit 
 
 ### Release history and current patch
 
-The figures below belong to the previously verified **0.2.304** release. The new **0.2.306** feature patch is described in the [changelog](../CHANGELOG.md); use its own release validation asset for the new build/installer results.
+The figures below belong to the previously verified **0.2.304** release. The new **0.2.307** feature patch is described in the [changelog](../CHANGELOG.md); use its own release validation asset for the new build/installer results.
 
 
 - Technical baseline: **0.2.0-rc30 / Fix4**; MSI version **0.2.304**, Windows x64.

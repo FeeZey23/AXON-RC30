@@ -60,9 +60,9 @@ Nur nach isolierter Abnahme und Hashprüfung. rc26/rc27 unverändert weiterlaufe
 
 ```powershell
 # Prüfen ohne Installation:
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts\Install-Local.ps1 -Msi releases\ISAS-AXON-RC30-0.2.306-win-x64.msi
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\Install-Local.ps1 -Msi releases\ISAS-AXON-RC30-0.2.307-win-x64.msi
 # Erst dieser Aufruf installiert:
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts\Install-Local.ps1 -Msi releases\ISAS-AXON-RC30-0.2.306-win-x64.msi -Install -CloseExistingRc30
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\Install-Local.ps1 -Msi releases\ISAS-AXON-RC30-0.2.307-win-x64.msi -Install -CloseExistingRc30
 ```
 
 Ein `ExecutionPolicy Bypass` gilt nur für diesen expliziten Skriptprozess und ist kein Abschalten von Defender/SmartScreen. Vorher Quelle prüfen. Unsichere oder unerwartet veränderte Pakete nicht ausführen.

@@ -73,17 +73,18 @@ public sealed class GitHubService
             var asset=assets.Single(a=>a.GetProperty("name").GetString()==name);var digest=asset.GetProperty("digest").GetString()!;
             _=UpdateManifest.Parse(manifestText,digest);
             var bundle=m.GetProperty("bootstrapper");name=bundle.GetProperty("file").GetString()!;var hash=bundle.GetProperty("sha256").GetString()!.ToLowerInvariant();
-            digest=assets.Single(a=>a.GetProperty("name").GetString()==name).GetProperty("digest").GetString()!;
+            var remoteName=UpdateManifest.GitHubBootstrapperAsset(name);digest=assets.Single(a=>a.GetProperty("name").GetString()==remoteName).GetProperty("digest").GetString()!;
             UpdateManifest.ValidateBootstrapper(name,hash,digest);
-            return new(release.GetProperty("tag_name").GetString()!,version,name,hash,digest,release.GetProperty("body").GetString()??"");
+            return new(release.GetProperty("tag_name").GetString()!,version,remoteName,hash,digest,release.GetProperty("body").GetString()??"");
         }
         return null;
     }
     public async Task<string> DownloadUpdateAsync(UpdateOffer offer,CancellationToken token=default)
     {
+        if(offer.AssetName!=UpdateManifest.GitHubBootstrapperAsset("AXON RC30 Installer.exe"))throw new InvalidDataException("Unexpected GitHub update asset.");
         var staging=Path.Combine(Rc30Paths.DataRoot,"Updates",Guid.NewGuid().ToString("N"));Directory.CreateDirectory(staging);
         await ProductTools.GhAsync(new[]{"release","download",offer.Tag,"--repo",ProductPolicy.Repository,"--pattern",offer.AssetName,"--dir",staging},timeout:TimeSpan.FromMinutes(10),token:token);
-        var path=Path.Combine(staging,offer.AssetName);using var s=File.OpenRead(path);var hash=Convert.ToHexString(await SHA256.HashDataAsync(s,token)).ToLowerInvariant();if(hash!=offer.Sha256)throw new InvalidDataException("Downloaded update hash mismatch; installation refused.");return path;
+        var path=Path.Combine(staging,offer.AssetName);using var s=File.OpenRead(path);var hash=Convert.ToHexString(await SHA256.HashDataAsync(s,token)).ToLowerInvariant();if(hash!=offer.Sha256)throw new InvalidDataException("Downloaded update hash mismatch; installation refused.");s.Dispose();var local=Path.Combine(staging,"AXON RC30 Installer.exe");File.Move(path,local);return local;
     }
 }
 

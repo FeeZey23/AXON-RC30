@@ -56,7 +56,7 @@ Private runtime state is stored under `%LOCALAPPDATA%\AXON\RC30`. Do not commit 
 
 ### Release history and current patch
 
-The figures below belong to the previously verified **0.2.304** release. The new **0.2.306** feature patch is described in the [changelog](./CHANGELOG.md); use its own release validation asset for the new build/installer results.
+The figures below belong to the previously verified **0.2.304** release. The new **0.2.307** feature patch is described in the [changelog](./CHANGELOG.md); use its own release validation asset for the new build/installer results.
 
 
 - Technical baseline: **0.2.0-rc30 / Fix4**; MSI version **0.2.304**, Windows x64.
@@ -94,12 +94,12 @@ This guide covers installation, the first confirmed connection, daily use, recov
 ### 2. Download and verify the installer
 
 1. Sign in to a GitHub account allowed to access this **private repository**. A 404 while signed out is not proof that the release was deleted.
-2. Open the [verified Windows release](https://github.com/FeeZey23/AXON-RC30/releases/tag/rc30-isas-0.2.306).
-3. Under **Assets**, download `ISAS-AXON-RC30-0.2.306-win-x64.msi` and its `.sha256` file. The source ZIP is for development, not the installer.
+2. Open the [verified Windows release](https://github.com/FeeZey23/AXON-RC30/releases/tag/rc30-isas-0.2.307).
+3. Under **Assets**, download `ISAS-AXON-RC30-0.2.307-win-x64.msi` and its `.sha256` file. The source ZIP is for development, not the installer.
 4. Open PowerShell in the download folder and run this check for **this exact release**:
 
 ```powershell
-$msi = '.\ISAS-AXON-RC30-0.2.306-win-x64.msi'
+$msi = '.\ISAS-AXON-RC30-0.2.307-win-x64.msi'
 $expected = ((Get-Content -LiteralPath ($msi + '.sha256') -Raw).Trim() -split '\s+')[0]
 if ($expected -notmatch '^[a-fA-F0-9]{64}$') { throw 'Invalid SHA-256 file.' }
 $actual = (Get-FileHash -LiteralPath $msi -Algorithm SHA256).Hash.ToLowerInvariant()
@@ -239,7 +239,7 @@ Private Laufzeitdaten liegen unter `%LOCALAPPDATA%\AXON\RC30`. Settings, Profile
 
 ### Releasehistorie und aktueller Patch
 
-Die folgenden Zahlen gehören zum zuvor geprüften Release **0.2.304**. Der neue Funktionspatch **0.2.306** steht im [Patchlog](./CHANGELOG.md); seine Build-/Installernachweise werden gesondert beim zugehörigen Release bereitgestellt.
+Die folgenden Zahlen gehören zum zuvor geprüften Release **0.2.304**. Der neue Funktionspatch **0.2.307** steht im [Patchlog](./CHANGELOG.md); seine Build-/Installernachweise werden gesondert beim zugehörigen Release bereitgestellt.
 
 
 - Technische Basis: **0.2.0-rc30 / Fix4**, MSI **0.2.304**, Windows x64.
@@ -277,12 +277,12 @@ Diese Anleitung führt durch Installation, erste bestätigte Verbindung, Alltag,
 ### 2. Installer herunterladen und prüfen
 
 1. Bei GitHub mit einem für dieses **private Repository** berechtigten Konto anmelden. Ein 404 ohne Anmeldung bedeutet nicht, dass das Release gelöscht wurde.
-2. Das [geprüfte Windows-Release](https://github.com/FeeZey23/AXON-RC30/releases/tag/rc30-isas-0.2.306) öffnen.
-3. Unter **Assets** `ISAS-AXON-RC30-0.2.306-win-x64.msi` und die zugehörige `.sha256`-Datei herunterladen. Das Source-ZIP enthält Quellen und ist nicht der Installer.
+2. Das [geprüfte Windows-Release](https://github.com/FeeZey23/AXON-RC30/releases/tag/rc30-isas-0.2.307) öffnen.
+3. Unter **Assets** `ISAS-AXON-RC30-0.2.307-win-x64.msi` und die zugehörige `.sha256`-Datei herunterladen. Das Source-ZIP enthält Quellen und ist nicht der Installer.
 4. PowerShell im Downloadordner öffnen und für **genau dieses Release** prüfen:
 
 ```powershell
-$msi = '.\ISAS-AXON-RC30-0.2.306-win-x64.msi'
+$msi = '.\ISAS-AXON-RC30-0.2.307-win-x64.msi'
 $expected = ((Get-Content -LiteralPath ($msi + '.sha256') -Raw).Trim() -split '\s+')[0]
 if ($expected -notmatch '^[a-fA-F0-9]{64}$') { throw 'Invalid SHA-256 file.' }
 $actual = (Get-FileHash -LiteralPath $msi -Algorithm SHA256).Hash.ToLowerInvariant()
